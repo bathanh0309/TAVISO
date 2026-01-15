@@ -36,7 +36,6 @@ class LicensePlateDetector:
         self.ocr = PaddleOCR(
             use_angle_cls=ocr_config.get('use_angle_cls', True),
             lang=ocr_config.get('lang', 'en'),
-            use_gpu=ocr_config.get('use_gpu', False),
             show_log=False
         )
         

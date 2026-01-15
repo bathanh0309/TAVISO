@@ -49,11 +49,12 @@ pip install -q -r requirements.txt
 REM Start server
 echo [4/4] Starting TAVISO server...
 echo.
-echo Server will be available at: http://localhost:8000
+echo ========================================
+echo   Server: http://localhost:8000
+echo ========================================
 echo Press CTRL+C to stop the server
 echo.
 
 python -m backend.main
 
 pause
-

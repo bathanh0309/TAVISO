@@ -20,7 +20,6 @@ model:
 
 ocr:
   lang: "en"  # PaddleOCR language
-  use_gpu: false
   use_angle_cls: true
 
 server:

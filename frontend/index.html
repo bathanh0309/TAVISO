@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="/static/css/style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 
 <body>
@@ -16,97 +16,37 @@
         <!-- Header -->
         <header class="header">
             <div class="header-content">
-                <div class="header-left">
-                    <h1>TAVISO - Phát Hiện Vi Phạm Giao Thông</h1>
-                    <p class="subtitle">Thành phố Đà Nẵng, Việt Nam</p>
-                </div>
-                <div class="header-right">
-                    <div class="status-indicator">
-                        <span class="status-dot pulse"></span>
-                        <span class="status-text">Đang hoạt động</span>
-                    </div>
+                <h1>TAVISO - Phát Hiện Vi Phạm Giao Thông</h1>
+                <div class="status-indicator">
+                    <span class="status-dot"></span>
+                    <span>Đang hoạt động</span>
                 </div>
             </div>
         </header>
 
-        <!-- Statistics Cards -->
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-icon">⚠️</div>
-                <div class="stat-content">
-                    <div class="stat-label">Tổng vi phạm</div>
-                    <div class="stat-value" id="total-violations">0</div>
-                </div>
-            </div>
-
-            <div class="stat-card">
-                <div class="stat-icon">📅</div>
-                <div class="stat-content">
-                    <div class="stat-label">Hôm nay</div>
-                    <div class="stat-value" id="today-violations">0</div>
-                </div>
-            </div>
-
-            <div class="stat-card warning">
-                <div class="stat-icon">↩️</div>
-                <div class="stat-content">
-                    <div class="stat-label">Đi ngược chiều</div>
-                    <div class="stat-value" id="wrong-way-count">0</div>
-                </div>
-            </div>
-
-            <div class="stat-card danger">
-                <div class="stat-icon">🚀</div>
-                <div class="stat-content">
-                    <div class="stat-label">Vượt tốc độ</div>
-                    <div class="stat-value" id="speeding-count">0</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Main Content Grid -->
+        <!-- Main Content -->
         <div class="main-grid">
-            <!-- Left Column: Camera Stream (Larger) -->
+            <!-- Left: Camera Stream -->
             <div class="camera-section">
-                <div class="section-header">
+                <div class="section-title">
                     <h2>Camera Giám Sát</h2>
-                    <span class="status-badge live">
-                        <span class="live-dot"></span>
-                        TRỰC TIẾP
-                    </span>
+                    <span class="live-badge">● TRỰC TIẾP</span>
                 </div>
                 <div class="stream-container">
-                    <img id="video-stream" src="/stream" alt="Camera Stream">
-                    <div class="stream-overlay">
-                        <div class="overlay-info">
-                            <span>AI: YOLOv11 + DeepSORT</span>
-                            <span id="fps-counter">FPS: --</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="stream-footer">
-                    <div class="stream-info-item">
-                        <span class="info-label">Vi phạm gần nhất:</span>
-                        <span id="last-violation" class="info-value violation-alert">Chưa có</span>
-                    </div>
-                    <div class="stream-info-item">
-                        <span class="info-label">Cập nhật:</span>
-                        <span id="last-update" class="info-value">--:--:--</span>
-                    </div>
+                    <img id="video-stream" src="/stream?t=0" alt="Camera Stream"
+                        onerror="this.alt='Camera không khả dụng'">
                 </div>
             </div>
 
-            <!-- Right Column: Tables -->
+            <!-- Right: Tables -->
             <div class="tables-section">
-                <!-- Realtime Violations -->
+                <!-- Realtime Table -->
                 <div class="table-card">
-                    <div class="section-header">
+                    <div class="section-title">
                         <h2>Vi Phạm Realtime</h2>
-                        <button class="btn-refresh" onclick="refreshData()" title="Làm mới dữ liệu">
-                            🔄
-                        </button>
+                        <button class="btn-refresh" onclick="refreshData()">🔄</button>
                     </div>
-                    <div class="table-container small">
+                    <div class="table-container">
                         <table class="data-table">
                             <thead>
                                 <tr>
@@ -118,25 +58,21 @@
                             </thead>
                             <tbody id="realtime-tbody">
                                 <tr>
-                                    <td colspan="4" class="loading">Đang tải dữ liệu...</td>
+                                    <td colspan="4" class="no-data">Chưa có dữ liệu</td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
                 </div>
 
-                <!-- History Storage -->
+                <!-- Database Table -->
                 <div class="table-card">
-                    <div class="section-header">
+                    <div class="section-title">
                         <h2>Lịch Sử Lưu Trữ</h2>
-                        <div class="pagination-controls">
-                            <button id="prev-btn" onclick="prevPage()" disabled aria-label="Trang trước">
-                                ←
-                            </button>
+                        <div class="pagination">
+                            <button id="prev-btn" onclick="prevPage()" disabled>←</button>
                             <span id="page-info">Trang <strong>1</strong></span>
-                            <button id="next-btn" onclick="nextPage()" aria-label="Trang sau">
-                                →
-                            </button>
+                            <button id="next-btn" onclick="nextPage()">→</button>
                         </div>
                     </div>
                     <div class="table-container">
@@ -152,7 +88,7 @@
                             </thead>
                             <tbody id="history-tbody">
                                 <tr>
-                                    <td colspan="5" class="loading">Đang tải dữ liệu...</td>
+                                    <td colspan="5" class="no-data">Đang tải...</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -164,9 +100,9 @@
         <!-- Footer -->
         <footer class="footer">
             <div class="footer-content">
-                <span>© 2026 TAVISO - Hệ Thống Phát Hiện Vi Phạm Giao Thông Đà Nẵng</span>
+                <span>© 2026 TAVISO - Đà Nẵng, Việt Nam</span>
                 <span class="separator">|</span>
-                <span>Powered by YOLOv11 + DeepSORT + PaddleOCR</span>
+                <span>YOLOv11 + DeepSORT + PaddleOCR</span>
                 <span class="separator">|</span>
                 <span>Phát triển bởi <a href="https://github.com/bathanh0309" target="_blank"
                         rel="noopener noreferrer">@bathanh0309</a></span>

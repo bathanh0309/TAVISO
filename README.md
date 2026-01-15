@@ -9,7 +9,7 @@ Hệ thống nhận diện biển số xe thời gian thực sử dụng **YOLOv
 ## Tính năng
 
 - **Live Streaming**: Xem camera stream real-time với detection overlay
-- **AI Detection**: Nhận diện biển số xe Việt Nam bằng YOLOv11 + EasyOCR
+- **AI Detection**: Nhận diện biển số xe Việt Nam bằng YOLOv11 + PaddleOCR
 - **Data Logging**: Tự động lưu vào SQLite database và CSV file
 - **Thống kê Real-time**: Dashboard hiển thị số liệu theo giờ, ngày
 - **Giao diện hiện đại**: Dark theme, glassmorphism, responsive design
