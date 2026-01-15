@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚗 Hệ Thống Giám Sát Giao Thông Đà Nẵng</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="header-left">
+                    <h1>🚗 Hệ Thống Giám Sát Giao Thông</h1>
+                    <p class="subtitle">📍 Thành phố Đà Nẵng, Việt Nam</p>
+                </div>
+                <div class="header-right">
+                    <div class="status-indicator">
+                        <span class="status-dot pulse"></span>
+                        <span class="status-text">Đang hoạt động</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Statistics Cards -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">📊</div>
+                <div class="stat-content">
+                    <div class="stat-label">Tổng phát hiện</div>
+                    <div class="stat-value" id="total-detections">0</div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">📅</div>
+                <div class="stat-content">
+                    <div class="stat-label">Hôm nay</div>
+                    <div class="stat-value" id="today-detections">0</div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">⏰</div>
+                <div class="stat-content">
+                    <div class="stat-label">Giờ vừa qua</div>
+                    <div class="stat-value" id="hour-detections">0</div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">🚙</div>
+                <div class="stat-content">
+                    <div class="stat-label">Biển số duy nhất</div>
+                    <div class="stat-value" id="unique-plates">0</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content Grid -->
+        <div class="main-grid">
+            <!-- Left Column: Camera Stream (Larger) -->
+            <div class="camera-section">
+                <div class="section-header">
+                    <h2>📹 Camera Giám Sát</h2>
+                    <span class="status-badge live">
+                        <span class="live-dot"></span>
+                        TRỰC TIẾP
+                    </span>
+                </div>
+                <div class="stream-container">
+                    <img id="video-stream" src="/stream" alt="Camera Stream">
+                    <div class="stream-overlay">
+                        <div class="overlay-info">
+                            <span>🎯 AI Detection: YOLOv11</span>
+                            <span id="fps-counter">FPS: --</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="stream-footer">
+                    <div class="stream-info-item">
+                        <span class="info-label">Phát hiện gần nhất:</span>
+                        <span id="last-detection" class="info-value">Chưa có dữ liệu</span>
+                    </div>
+                    <div class="stream-info-item">
+                        <span class="info-label">Cập nhật:</span>
+                        <span id="last-update" class="info-value">--:--:--</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Tables -->
+            <div class="tables-section">
+                <!-- Realtime Detections -->
+                <div class="table-card">
+                    <div class="section-header">
+                        <h2>🔴 Theo dõi Realtime</h2>
+                        <button class="btn-refresh" onclick="refreshData()" title="Làm mới dữ liệu">
+                            🔄
+                        </button>
+                    </div>
+                    <div class="table-container small">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Biển số</th>
+                                    <th>Thời gian</th>
+                                    <th>Độ tin cậy</th>
+                                </tr>
+                            </thead>
+                            <tbody id="realtime-tbody">
+                                <tr>
+                                    <td colspan="3" class="loading">Đang tải dữ liệu...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- History Storage -->
+                <div class="table-card">
+                    <div class="section-header">
+                        <h2>💾 Lịch sử Lưu trữ</h2>
+                        <div class="pagination-controls">
+                            <button id="prev-btn" onclick="prevPage()" disabled aria-label="Trang trước">
+                                ←
+                            </button>
+                            <span id="page-info">Trang <strong>1</strong></span>
+                            <button id="next-btn" onclick="nextPage()" aria-label="Trang sau">
+                                →
+                            </button>
+                        </div>
+                    </div>
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Biển số</th>
+                                    <th>Thời gian</th>
+                                    <th>Độ tin cậy</th>
+                                </tr>
+                            </thead>
+                            <tbody id="history-tbody">
+                                <tr>
+                                    <td colspan="4" class="loading">Đang tải dữ liệu...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-content">
+                <span>© 2026 Hệ Thống Giám Sát Giao Thông Đà Nẵng</span>
+                <span class="separator">|</span>
+                <span>Powered by YOLOv11 + EasyOCR</span>
+                <span class="separator">|</span>
+                <span>Phát triển bởi <a href="https://github.com/bathanh0309" target="_blank">@bathanh0309</a></span>
+            </div>
+        </footer>
+    </div>
+
+    <script src="/static/js/app.js"></script>
+</body>
+
+</html>

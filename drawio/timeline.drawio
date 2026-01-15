@@ -1,0 +1,184 @@
+<mxfile host="65bd71144e">
+    <diagram id="traffic-aiot-roadmap" name="TAVISO">
+        <mxGraphModel dx="1401" dy="593" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1200" background="#ffffff" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="title" value="&lt;b&gt;&lt;font style=&quot;font-size: 18px&quot;&gt;Hệ thống AIoT Giao thông - Lộ trình: 05/01/2026 đến 28/02/2026&lt;/font&gt;&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontColor=#000000;" parent="1" vertex="1">
+                    <mxGeometry x="681" y="90" width="700" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="timeline-jan" value="&lt;b&gt;Tháng 1/2026&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontColor=#000000;" parent="1" vertex="1">
+                    <mxGeometry x="606" y="123" width="450" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="timeline-feb" value="&lt;b&gt;Tháng 2/2026&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontColor=#000000;" parent="1" vertex="1">
+                    <mxGeometry x="1056" y="123" width="350" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="week1" value="Tuần 1&lt;br&gt;(06-12/01)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#000000;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="606" y="153" width="110" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="week2" value="Tuần 2&lt;br&gt;(13-19/01)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#000000;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="716" y="153" width="110" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="week3" value="Tuần 3&lt;br&gt;(20-26/01)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#000000;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="826" y="153" width="110" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="week4" value="Tuần 4&lt;br&gt;(27/01-03/02)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#000000;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="936" y="153" width="120" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="week5" value="Tuần 5-6&lt;br&gt;(04-17/02)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#000000;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="1056" y="153" width="110" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="week7" value="Tuần 7-8&lt;br&gt;(18-28/02)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#000000;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="1166" y="153" width="110" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="phase1-header" value="&lt;b&gt;1. Huấn luyện&lt;/b&gt;&lt;br&gt;(Hoàn thành)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#6699FF;strokeColor=#3366CC;fontColor=#000000;align=center;" parent="1" vertex="1">
+                    <mxGeometry x="446" y="213" width="140" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="training-bar" value="1.1 Huấn luyện YOLO, chuẩn bị dữ liệu, xuất mô hình (XONG)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#6699FF;strokeColor=#3366CC;fontColor=#000000;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="606" y="213" width="330" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="phase2-header" value="&lt;b&gt;2. Pipeline Suy luận&lt;/b&gt;&lt;br&gt;(Tuần 1)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FF6666;strokeColor=#CC3333;fontColor=#000000;align=center;" parent="1" vertex="1">
+                    <mxGeometry x="446" y="283" width="140" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="inference-bar" value="Phát hiện &amp;amp; theo dõi" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FF6666;strokeColor=#CC3333;fontColor=#000000;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="606" y="283" width="55" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="lanes-bar" value="Làn xe, hiệu chuẩn&amp;nbsp;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFCCCC;strokeColor=#CC6666;fontColor=#000000;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="661" y="283" width="55" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="phase3-header" value="&lt;b&gt;3. Vi phạm + OCR&lt;/b&gt;&lt;br&gt;(Tuần 2)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#CCE5FF;strokeColor=#6699CC;fontColor=#000000;align=center;" parent="1" vertex="1">
+                    <mxGeometry x="446" y="353" width="140" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="viol-core" value="Logic phát hiện vi phạm" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#CCE5FF;strokeColor=#6699CC;fontColor=#000000;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="716" y="353" width="35" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="evidence-bar" value="Ghi bằng chứng" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#CCE5FF;strokeColor=#6699CC;fontColor=#000000;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="751" y="353" width="35" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="ocr-bar" value="Đọc biển số" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#CCE5FF;strokeColor=#6699CC;fontColor=#000000;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="786" y="353" width="40" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="phase4-header" value="&lt;b&gt;4. Điều khiển&lt;/b&gt;&lt;br&gt;(Tuần 3)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#CCE5FF;strokeColor=#6699CC;fontColor=#000000;align=center;" parent="1" vertex="1">
+                    <mxGeometry x="446" y="423" width="140" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="fuzzy-bar" value="Điều khiển mờ" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#CCE5FF;strokeColor=#6699CC;fontColor=#000000;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="826" y="423" width="35" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="simulator-bar" value="Mô phỏng giao thông" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#CCE5FF;strokeColor=#6699CC;fontColor=#000000;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="861" y="423" width="45" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="fuzzy-eval-bar" value="&amp;nbsp;Đánh giá" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#CCE5FF;strokeColor=#6699CC;fontColor=#000000;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="906" y="423" width="30" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="phase5-header" value="&lt;b&gt;5. Học tăng cường&lt;/b&gt;&lt;br&gt;(Tuần 4)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#CCE5FF;strokeColor=#6699CC;fontColor=#000000;align=center;" parent="1" vertex="1">
+                    <mxGeometry x="446" y="493" width="140" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="rl-env-bar" value="Môi trường RL&amp;nbsp;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#CCE5FF;strokeColor=#6699CC;fontColor=#000000;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="936" y="493" width="30" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="rl-train-bar" value="Huấn luyện RL" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#CCE5FF;strokeColor=#6699CC;fontColor=#000000;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="966" y="493" width="35" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="rl-eval-bar" value="Đánh giá RL" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#CCE5FF;strokeColor=#6699CC;fontColor=#000000;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="1001" y="493" width="45" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="phase6-header" value="&lt;b&gt;6. Báo cáo&lt;/b&gt;&lt;br&gt;(Tuần 4-6)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#CCE5FF;strokeColor=#6699CC;fontColor=#000000;align=center;" parent="1" vertex="1">
+                    <mxGeometry x="446" y="563" width="140" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="report-bar" value="Viết bài&amp;nbsp;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#CCE5FF;strokeColor=#6699CC;fontColor=#000000;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="1046" y="563" width="50" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="slides-bar" value="Slide + Demo" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#CCE5FF;strokeColor=#6699CC;fontColor=#000000;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="1096" y="563" width="60" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="phase7-header" value="&lt;b&gt;7. Tối ưu hóa&lt;/b&gt;&lt;br&gt;(Tuần 7-8)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#CCE5FF;strokeColor=#6699CC;fontColor=#000000;align=center;" parent="1" vertex="1">
+                    <mxGeometry x="446" y="633" width="140" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="optim-bar" value="Tối ưu mô hình" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#CCE5FF;strokeColor=#6699CC;fontColor=#000000;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="1156" y="633" width="50" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="final-bar" value="Kiểm tra &amp;amp; nộp" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#CCE5FF;strokeColor=#6699CC;fontColor=#000000;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="1206" y="633" width="70" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="milestone-title" value="&lt;b&gt;Cột mốc quan trọng:&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;fontColor=#000000;" parent="1" vertex="1">
+                    <mxGeometry x="1093" y="242" width="120" height="25" as="geometry"/>
+                </mxCell>
+                <mxCell id="m1" value="◆ M1: Hoàn thành Pipeline suy luận (12/01)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;fontColor=#000000;" parent="1" vertex="1">
+                    <mxGeometry x="1053" y="270" width="200" height="25" as="geometry"/>
+                </mxCell>
+                <mxCell id="m2" value="◆ M2: Hoàn thành Vi phạm + OCR (19/01)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;fontColor=#000000;align=left;" parent="1" vertex="1">
+                    <mxGeometry x="1053" y="305" width="200" height="25" as="geometry"/>
+                </mxCell>
+                <mxCell id="m3" value="◆ M3: Demo giữa kỳ (26/01)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;fontColor=#000000;align=left;" parent="1" vertex="1">
+                    <mxGeometry x="1053" y="345" width="201" height="25" as="geometry"/>
+                </mxCell>
+                <mxCell id="m4" value="◆ M4: Hoàn thành học tăng cường (03/02)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;fontColor=#000000;" parent="1" vertex="1">
+                    <mxGeometry x="1053" y="384" width="201" height="25" as="geometry"/>
+                </mxCell>
+                <mxCell id="m5" value="◆ M5: Nộp cuối kỳ (28/02)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;fontColor=#000000;" parent="1" vertex="1">
+                    <mxGeometry x="1053" y="423" width="200" height="25" as="geometry"/>
+                </mxCell>
+                <mxCell id="detail-title" value="&lt;b&gt;Chi tiết công việc:&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;fontColor=#000000;" parent="1" vertex="1">
+                    <mxGeometry x="299" y="196" width="110" height="25" as="geometry"/>
+                </mxCell>
+                <mxCell id="w1-box" value="&lt;font style=&quot;font-size: 10px;&quot;&gt;&lt;b&gt;Tuần 1: Pipeline suy luận&lt;/b&gt;&lt;br&gt;• Phát hiện YOLO (FP16)&lt;br&gt;• Theo dõi DeepSORT&lt;br&gt;• Làm mượt quỹ đạo&lt;br&gt;• Hiệu chuẩn camera&lt;br&gt;• Ước tính tốc độ&lt;br&gt;• CLI chạy suy luận&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;fontSize=9;spacingLeft=5;fillColor=#fff2cc;strokeColor=#d6b656;fontColor=#000000;" parent="1" vertex="1">
+                    <mxGeometry x="283" y="217" width="150" height="96" as="geometry"/>
+                </mxCell>
+                <mxCell id="w2-box" value="&lt;font style=&quot;font-size: 10px;&quot;&gt;&lt;b&gt;Tuần 2: Vi phạm + OCR&lt;/b&gt;&lt;br&gt;• Tiện ích hình học&lt;br&gt;• Phát hiện vi phạm&lt;br&gt;• Theo dõi sự kiện&lt;br&gt;• Quản lý bằng chứng&lt;br&gt;• Phát hiện biển số&lt;br&gt;• Đọc biển số (PaddleOCR)&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;fontSize=9;spacingLeft=5;fillColor=#fff2cc;strokeColor=#d6b656;fontColor=#000000;" parent="1" vertex="1">
+                    <mxGeometry x="283" y="313" width="150" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="w3-box" value="&lt;font style=&quot;font-size: 10px;&quot;&gt;&lt;b&gt;Tuần 3: Module điều khiển&lt;/b&gt;&lt;br&gt;• Bộ điều khiển mờ&lt;br&gt;• Mô phỏng giao thông&lt;br&gt;• Tích hợp SUMO/TraCI&lt;br&gt;• Thử nghiệm cơ sở&lt;br&gt;• Chuẩn bị video demo&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;fontSize=9;spacingLeft=5;fillColor=#fff2cc;strokeColor=#d6b656;fontColor=#000000;" parent="1" vertex="1">
+                    <mxGeometry x="283" y="412" width="150" height="83" as="geometry"/>
+                </mxCell>
+                <mxCell id="w4-box" value="&lt;font style=&quot;font-size: 10px;&quot;&gt;&lt;b&gt;Tuần 4: RL + Báo cáo&lt;/b&gt;&lt;br&gt;• Bộ điều khiển RL (DQN)&lt;br&gt;• Thiết kế hàm thưởng&lt;br&gt;• Huấn luyện 1000 episode&lt;br&gt;• Phân tích loại bỏ&lt;br&gt;• Viết bài (6-8 trang)&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;fontSize=9;spacingLeft=5;fillColor=#fff2cc;strokeColor=#d6b656;fontColor=#000000;" parent="1" vertex="1">
+                    <mxGeometry x="283" y="494" width="150" height="84" as="geometry"/>
+                </mxCell>
+                <mxCell id="w5-box" value="&lt;font style=&quot;font-size: 10px;&quot;&gt;&lt;b&gt;Tuần 5-8: Hoàn thiện&lt;/b&gt;&lt;br&gt;• Tối ưu TensorRT&lt;br&gt;• Hỗ trợ đa camera&lt;br&gt;• Slide (15-20 trang)&lt;br&gt;• Video demo (3-5 phút)&lt;br&gt;• Nộp cuối kỳ (28/02)&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;fontSize=9;spacingLeft=5;fillColor=#d5e8d4;strokeColor=#82b366;fontColor=#000000;" parent="1" vertex="1">
+                    <mxGeometry x="283" y="586" width="150" height="81" as="geometry"/>
+                </mxCell>
+                <mxCell id="input-box" value="&lt;b&gt;ĐẦU VÀO&lt;/b&gt;&lt;br&gt;Video từ camera&lt;br&gt;(Camera cố định tại ngã tư)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;fontColor=#000000;" parent="1" vertex="1">
+                    <mxGeometry x="1282" y="169" width="143" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="detect-box" value="&lt;b&gt;PHÁT HIỆN&lt;/b&gt;&lt;br&gt;YOLOv8&lt;br&gt;+ DeepSORT" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;fontColor=#000000;" parent="1" vertex="1">
+                    <mxGeometry x="1283" y="242" width="141" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="violation-box" value="&lt;b&gt;VI PHẠM&lt;/b&gt;&lt;br&gt;Vượt đèn đỏ, lấn làn&lt;br&gt;+ OCR (PaddleOCR)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;fontColor=#000000;" parent="1" vertex="1">
+                    <mxGeometry x="1283" y="314" width="141" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="3" value="" style="edgeStyle=none;html=1;strokeColor=#000000;" edge="1" parent="1" source="control-box" target="output-box">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="control-box" value="&lt;b&gt;ĐIỀU KHIỂN&lt;/b&gt;&lt;br&gt;Logic mờ&lt;br&gt;+ DQN (RL)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;fontColor=#000000;" parent="1" vertex="1">
+                    <mxGeometry x="1282" y="390" width="140" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="arrow4" value="" style="endArrow=classic;html=1;rounded=0;strokeColor=#000000;" parent="1" source="control-box" target="output-box" edge="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="1586" y="311" as="sourcePoint"/>
+                        <mxPoint x="1636" y="261" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="output-box" value="&lt;b&gt;ĐẦU RA&lt;/b&gt;&lt;br&gt;• Đếm xe thời gian thực&lt;br&gt;• Nhật ký vi phạm + biển số&lt;br&gt;• Điều khiển đèn thông minh" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;align=center;spacingLeft=5;fontColor=#000000;" parent="1" vertex="1">
+                    <mxGeometry x="1283" y="463" width="140" height="65" as="geometry"/>
+                </mxCell>
+                <mxCell id="2" value="" style="endArrow=classic;html=1;rounded=0;strokeColor=#000000;" edge="1" parent="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="1351.6948275862069" y="374.0000000000001" as="sourcePoint"/>
+                        <mxPoint x="1351.8902298850576" y="391" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="5" value="" style="endArrow=classic;html=1;rounded=0;strokeColor=#000000;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="detect-box" target="violation-box">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="1361.6948275862067" y="384.0000000000001" as="sourcePoint"/>
+                        <mxPoint x="1361.8902298850576" y="401.0000000000001" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="6" value="" style="endArrow=classic;html=1;rounded=0;strokeColor=#000000;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="input-box" target="detect-box">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="1371.6948275862067" y="394.0000000000001" as="sourcePoint"/>
+                        <mxPoint x="1371.8902298850576" y="411.0000000000001" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>

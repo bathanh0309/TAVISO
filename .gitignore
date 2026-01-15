@@ -1,0 +1,58 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+*.egg-info/
+.venv/
+venv/
+ENV/
+*.pyc
+
+# Data & Logs (KHÔNG push lên Git)
+data/database/*.db
+data/csv/*.csv
+data/crops/
+logs/
+*.log
+
+# Mock images (giữ cấu trúc folder nhưng không push ảnh)
+data/mock_stream/images/*.jpg
+data/mock_stream/images/*.png
+data/mock_stream/video.mp4
+
+# Models (dung lượng lớn - download khi cần)
+*.pt
+*.onnx
+*.pth
+models/*.pt
+!models/.gitkeep
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Environment
+.env
+.env.local
+
+# Docker
+docker-compose.override.yml
+
+# OS-specific
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Temporary files
+*.tmp
+*.bak
+*~
+
+# Evidence & exports
+evidence/
+exports/
+
+# EasyOCR models cache
+.EasyOCR/

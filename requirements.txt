@@ -1,0 +1,23 @@
+# Core dependencies
+ultralytics>=8.4.0
+opencv-python>=4.6.0
+numpy>=1.23.0
+pillow>=7.1.2
+
+# Backend
+fastapi>=0.100.0
+uvicorn[standard]>=0.20.0
+python-multipart>=0.0.6
+sqlalchemy>=2.0.0
+pyyaml>=5.3.1
+
+# OCR for license plate reading
+paddlepaddle>=2.6.0
+paddleocr>=2.7.0
+
+# Tracking
+deep-sort-realtime>=1.3.2
+
+# Utilities
+python-dateutil>=2.8.2
+aiofiles>=23.0.0

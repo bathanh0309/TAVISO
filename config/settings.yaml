@@ -1,0 +1,27 @@
+camera:
+  source: "mock"  # "mock", "rtsp://username:password@camera-ip:554/stream", "http://..."
+  fps: 10
+  mock_images_dir: "data/mock_stream/images"
+  mock_video: "data/mock_stream/video.mp4"
+
+database:
+  path: "data/database/plates.db"
+
+csv:
+  path: "data/csv/records.csv"
+
+model:
+  yolo_path: "models/yolo11n.pt"
+  confidence: 0.5
+  ocr_languages: ['en', 'vi']  # For EasyOCR
+
+server:
+  host: "0.0.0.0"
+  port: 8000
+  reload: true
+
+detection:
+  save_crops: true
+  crops_dir: "data/crops"
+  min_plate_area: 100  # Minimum area in pixels
+  cooldown_seconds: 5  # Avoid duplicate detections
