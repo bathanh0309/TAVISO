@@ -26,55 +26,66 @@ class CameraStream:
         self.height = camera_config.get('height', 720)
         
         self.cap = None
+        self.frame = None  # Current frame buffer
+        self.running = False
+        self.thread = None
+        
         self.mock_images = []
         self.mock_index = 0
         self.frame_count = 0
         
         self._initialize_source()
-    
+
     def _initialize_source(self):
         """Initialize camera source based on configuration"""
         # Handle webcam (integer source)
         if isinstance(self.source, int) or (isinstance(self.source, str) and self.source.isdigit()):
             device_index = int(self.source)
             print(f"Opening webcam (device {device_index})...")
-            # Use DirectShow (CAP_DSHOW) which is generally more reliable on Windows
+            # Reverting to CAP_DSHOW because MSMF is failing with error -1072875772
             self.cap = cv2.VideoCapture(device_index, cv2.CAP_DSHOW)
             
             if self.cap.isOpened():
-                # Set safer resolution first (640x480) to avoid bandwidth issues
+                # Force 640x480 for stability
                 self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
                 self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
                 self.cap.set(cv2.CAP_PROP_FPS, 30)
                 
-                # Warm up camera (read a few frames to let auto-exposure settle)
+                # Warm up
                 for _ in range(5):
                     self.cap.read()
                 
                 actual_width = int(self.cap.get(cv2.CAP_PROP_FRAME_WIDTH))
                 actual_height = int(self.cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
                 print(f"✓ Webcam opened: {actual_width}x{actual_height} (Backend: DSHOW)")
+                
+                # Start capture thread
+                self.start()
             else:
                 print(f"✗ Failed to open webcam {device_index}")
                 self._create_default_frame()
+                self.frame = self.default_frame.copy()
         
         elif self.source == "mock":
-            # Use mock images
+            # Use mock images logic (simplified for threading compatibility)
             mock_dir = self.config['camera'].get('mock_images_dir', 'data/mock_stream/images')
             if os.path.exists(mock_dir):
                 image_files = list(Path(mock_dir).glob('*.jpg')) + \
                              list(Path(mock_dir).glob('*.png'))
                 self.mock_images = [str(f) for f in sorted(image_files)]
-                
                 if self.mock_images:
                     print(f"✓ Loaded {len(self.mock_images)} mock images")
-                else:
-                    print("⚠ No mock images found, using default")
-                    self._create_default_frame()
-            else:
-                print("⚠ Mock directory not found, using default")
+            
+            if not self.mock_images:
                 self._create_default_frame()
-        
+                self.frame = self.default_frame.copy()
+            else:
+                # Pre-load first frame
+                self.frame = cv2.imread(self.mock_images[0])
+                if self.frame is None:
+                    self._create_default_frame()
+                    self.frame = self.default_frame.copy()
+
         elif self.source.startswith(('rtsp://', 'http://', 'https://')):
             # IP camera stream
             print(f"Connecting to IP camera: {self.source}")
@@ -82,127 +93,103 @@ class CameraStream:
             
             if self.cap.isOpened():
                 print("✓ IP camera connected")
+                self.start()
             else:
                 print(f"✗ Failed to connect to: {self.source}")
                 self._create_default_frame()
+                self.frame = self.default_frame.copy()
         
         else:
-            # Try as video file
+            # Video file
             if os.path.exists(self.source):
                 print(f"Opening video file: {self.source}")
                 self.cap = cv2.VideoCapture(self.source)
                 if self.cap.isOpened():
                     print("✓ Video file opened")
+                    self.start()
                 else:
                     self._create_default_frame()
+                    self.frame = self.default_frame.copy()
             else:
                 print(f"Unknown source: {self.source}")
                 self._create_default_frame()
+                self.frame = self.default_frame.copy()
     
+    def start(self):
+        """Start the thread to read frames from the video stream"""
+        if self.running:
+            return
+        
+        self.running = True
+        self.thread = threading.Thread(target=self.update, daemon=True)
+        self.thread.start()
+        print("✓ Camera capture thread started")
+
+    def update(self):
+        """Output frames from buffer (Thread function)"""
+        while self.running:
+            if self.cap is None or not self.cap.isOpened():
+                time.sleep(0.1)
+                continue
+                
+            ret, frame = self.cap.read()
+            
+            if ret:
+                # Add timestamp
+                self._add_timestamp(frame)
+                with self.lock:
+                    self.frame = frame
+            else:
+                # If video file, loop
+                if not isinstance(self.source, int) and self.cap.get(cv2.CAP_PROP_POS_FRAMES) == self.cap.get(cv2.CAP_PROP_FRAME_COUNT):
+                     self.cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
+                else:
+                     # Wait a bit if read failed
+                     time.sleep(0.01)
+
+            # Cap read speed (simple approximate)
+            # time.sleep(0.005) 
+
     def _create_default_frame(self):
         """Create a default frame when no source is available"""
         self.default_frame = np.zeros((self.height, self.width, 3), dtype=np.uint8)
-        
-        # Draw a "No Camera" message
         text = "Camera Not Available"
-        font = cv2.FONT_HERSHEY_SIMPLEX
-        font_scale = 1.5
-        thickness = 3
-        
-        text_size = cv2.getTextSize(text, font, font_scale, thickness)[0]
-        text_x = (self.width - text_size[0]) // 2
-        text_y = (self.height + text_size[1]) // 2
-        
-        cv2.putText(self.default_frame, text, (text_x, text_y),
-                   font, font_scale, (100, 100, 100), thickness)
-        
-        # Add instruction
-        instruction = "Configure camera in config/settings.yaml"
-        inst_size = cv2.getTextSize(instruction, font, 0.7, 2)[0]
-        cv2.putText(self.default_frame, instruction, 
-                   ((self.width - inst_size[0]) // 2, text_y + 50),
-                   font, 0.7, (80, 80, 80), 2)
-    
+        cv2.putText(self.default_frame, text, (50, self.height // 2),
+                   cv2.FONT_HERSHEY_SIMPLEX, 1, (100, 100, 100), 2)
+
     def get_frame(self):
-        """
-        Get next frame from camera
-        
-        Returns:
-            numpy.ndarray: Frame image or None if failed
-        """
+        """Get the latest frame (Non-blocking)"""
         self.frame_count += 1
         
-        if isinstance(self.source, int) or (isinstance(self.source, str) and self.source.isdigit()):
-            return self._get_camera_frame()
-        elif self.source == "mock":
-            return self._get_mock_frame()
-        elif self.cap is not None:
-            with self.lock:
-                return self._get_camera_frame()
-        else:
-            return self.default_frame if hasattr(self, 'default_frame') else None
-    
-    def _get_mock_frame(self):
-        """Get frame from mock images"""
-        if not self.mock_images:
-            return self.default_frame if hasattr(self, 'default_frame') else None
-        
-        # Cycle through images
-        image_path = self.mock_images[self.mock_index]
-        frame = cv2.imread(image_path)
-        
-        self.mock_index = (self.mock_index + 1) % len(self.mock_images)
-        
-        if frame is None:
-            return self.default_frame if hasattr(self, 'default_frame') else None
-        
-        # Resize to configured size
-        frame = cv2.resize(frame, (self.width, self.height))
-        
-        # Add timestamp overlay
-        self._add_timestamp(frame)
-        
-        return frame
-    
-    def _get_camera_frame(self):
-        """Get frame from real camera or video"""
-        if self.cap is None or not self.cap.isOpened():
-            return self.default_frame if hasattr(self, 'default_frame') else None
-        
-        ret, frame = self.cap.read()
-        
-        if not ret:
-            # For video files, loop back to start
-            if not isinstance(self.source, int) and os.path.isfile(str(self.source)):
-                self.cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
-                ret, frame = self.cap.read()
-            
-            if not ret:
-                return self.default_frame if hasattr(self, 'default_frame') else None
-        
-        # Add timestamp
-        self._add_timestamp(frame)
-        
-        return frame
-    
+        with self.lock:
+            if self.frame is not None:
+                return self.frame.copy()
+            elif hasattr(self, 'default_frame'):
+                return self.default_frame.copy()
+            else:
+                return None
+
     def _add_timestamp(self, frame):
         """Add timestamp overlay to frame"""
-        timestamp = time.strftime("%d/%m/%Y %H:%M:%S")
-        cv2.putText(frame, timestamp, (10, 30),
-                   cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
+        try:
+            timestamp = time.strftime("%d/%m/%Y %H:%M:%S")
+            cv2.putText(frame, timestamp, (10, 30),
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
+        except:
+            pass
     
     def release(self):
         """Release camera resources"""
+        self.running = False
+        if self.thread and self.thread.is_alive():
+            self.thread.join(timeout=1.0)
+            
         if self.cap is not None:
             self.cap.release()
             self.cap = None
     
     def is_opened(self):
-        """Check if camera is available"""
-        if self.source == "mock":
-            return len(self.mock_images) > 0 or hasattr(self, 'default_frame')
         return self.cap is not None and self.cap.isOpened()
     
     def __del__(self):
-        """Cleanup on deletion"""
         self.release()
