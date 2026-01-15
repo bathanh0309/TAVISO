@@ -11,6 +11,7 @@ import cv2
 import yaml
 import os
 import time
+from contextlib import asynccontextmanager
 
 from backend.database import get_db, init_db
 from backend.models import LicensePlate, TrafficViolation
@@ -28,40 +29,63 @@ from backend.services.logger import DetectionLogger
 with open('config/settings.yaml', 'r') as f:
     config = yaml.safe_load(f)
 
-# Initialize FastAPI app
-app = FastAPI(
-    title="TAVISO - Traffic Violation Detection System",
-    description="Real-time traffic violation detection using YOLOv11 + DeepSORT + PaddleOCR",
-    version="2.0.0"
-)
 
 # Initialize database
 init_db()
 
-# Initialize services (lazy loading)
+# Global services
 camera = None
 detector = None
 tracker = None
 violation_detector = None
 logger = None
 
-def get_services():
-    """Initialize services on first request"""
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """
+    Lifespan context manager for startup and shutdown events.
+    Initializes heavy models before server starts.
+    """
     global camera, detector, tracker, violation_detector, logger
     
-    if camera is None:
-        print("\n=== Initializing Services ===")
-        camera = CameraStream()
-    if detector is None:
-        detector = LicensePlateDetector()
-    if tracker is None:
-        tracker = VehicleTracker()
-    if violation_detector is None:
-        violation_detector = ViolationDetector()
-    if logger is None:
-        logger = DetectionLogger()
-        print("=== All Services Ready ===\n")
+    # Startup
+    print("\n" + "="*50)
+    print("🚀 TAVISO SYSTEM STARTING UP...")
+    print("="*50)
     
+    print("1. Initializing Camera...")
+    camera = CameraStream()
+    
+    print("2. Loading AI Models (This may take a while)...")
+    detector = LicensePlateDetector()
+    
+    print("3. Initializing Tracker & Violation Logic...")
+    tracker = VehicleTracker()
+    violation_detector = ViolationDetector()
+    logger = DetectionLogger()
+    
+    print("="*50)
+    print("✅ SYSTEM READY! Open http://localhost:8000")
+    print("="*50 + "\n")
+    
+    yield
+    
+    # Shutdown
+    print("\nShutting down services...")
+    if camera:
+        camera.release()
+    print("Services cleaned up.")
+
+# Initialize FastAPI app
+app = FastAPI(
+    title="TAVISO - Traffic Violation Detection System",
+    description="Real-time traffic violation detection using YOLOv11 + DeepSORT + PaddleOCR",
+    version="2.0.0",
+    lifespan=lifespan
+)
+
+def get_services():
+    """Get initialized services"""
     return camera, detector, tracker, violation_detector, logger
 
 
@@ -79,7 +103,57 @@ async def root():
     return HTMLResponse("<h1>Frontend not found</h1>", status_code=404)
 
 
-def generate_frames():
+
+
+
+import asyncio
+
+async def generate_simple_frames():
+    """Generate simple camera frames without detection (for testing)"""
+    global camera
+    
+    if camera is None:
+        print("\n=== Initializing Camera Only ===")
+        camera = CameraStream()
+        print("=== Camera Ready ===\n")
+    
+    while True:
+        frame = camera.get_frame()
+        
+        if frame is None:
+            # Create error frame
+            import numpy as np
+            frame = np.zeros((480, 640, 3), dtype=np.uint8)
+            cv2.putText(frame, "Camera Error", (200, 240),
+                       cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+        
+        # Encode frame to JPEG
+        ret, buffer = cv2.imencode('.jpg', frame, [cv2.IMWRITE_JPEG_QUALITY, 85])
+        
+        if not ret:
+            await asyncio.sleep(0.01)
+            continue
+        
+        frame_bytes = buffer.tobytes()
+        
+        # Yield frame in multipart format
+        yield (b'--frame\r\n'
+               b'Content-Type: image/jpeg\r\n\r\n' + frame_bytes + b'\r\n')
+        
+        # Control FPS and yield control to event loop
+        await asyncio.sleep(1.0 / config['camera']['fps'])
+
+
+@app.get("/stream/simple")
+async def video_stream_simple():
+    """Video streaming endpoint (simple camera only)"""
+    return StreamingResponse(
+        generate_simple_frames(),
+        media_type="multipart/x-mixed-replace; boundary=frame"
+    )
+
+
+async def generate_frames():
     """Generate video frames with vehicle detection and violation tracking"""
     cam, det, trk, vio_det, log = get_services()
     
@@ -121,6 +195,7 @@ def generate_frames():
             ret, buffer = cv2.imencode('.jpg', annotated_frame)
             
             if not ret:
+                await asyncio.sleep(0.01)
                 continue
             
             frame_bytes = buffer.tobytes()
@@ -129,15 +204,15 @@ def generate_frames():
             yield (b'--frame\r\n'
                    b'Content-Type: image/jpeg\r\n\r\n' + frame_bytes + b'\r\n')
             
-            # Control FPS
-            time.sleep(1.0 / config['camera']['fps'])
+            # Control FPS and yield to event loop
+            await asyncio.sleep(1.0 / config['camera']['fps'])
     finally:
         db.close()
 
 
 @app.get("/stream")
 async def video_stream():
-    """Video streaming endpoint"""
+    """Video streaming endpoint with full detection"""
     return StreamingResponse(
         generate_frames(),
         media_type="multipart/x-mixed-replace; boundary=frame"

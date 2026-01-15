@@ -35,8 +35,7 @@ class LicensePlateDetector:
         ocr_config = self.config.get('ocr', {})
         self.ocr = PaddleOCR(
             use_angle_cls=ocr_config.get('use_angle_cls', True),
-            lang=ocr_config.get('lang', 'en'),
-            show_log=False
+            lang=ocr_config.get('lang', 'en')
         )
         
         self.confidence_threshold = self.config['model']['confidence']

@@ -8,10 +8,13 @@ import os
 import time
 from pathlib import Path
 
+import threading
+
 class CameraStream:
     """Handle camera streaming from various sources"""
     
     def __init__(self, config_path='config/settings.yaml'):
+        self.lock = threading.Lock()
         # Load config
         with open(config_path, 'r') as f:
             self.config = yaml.safe_load(f)
@@ -35,17 +38,22 @@ class CameraStream:
         if isinstance(self.source, int) or (isinstance(self.source, str) and self.source.isdigit()):
             device_index = int(self.source)
             print(f"Opening webcam (device {device_index})...")
-            self.cap = cv2.VideoCapture(device_index, cv2.CAP_DSHOW)  # Use DirectShow on Windows
+            # Use DirectShow (CAP_DSHOW) which is generally more reliable on Windows
+            self.cap = cv2.VideoCapture(device_index, cv2.CAP_DSHOW)
             
             if self.cap.isOpened():
-                # Set resolution
-                self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, self.width)
-                self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, self.height)
-                self.cap.set(cv2.CAP_PROP_FPS, self.fps)
+                # Set safer resolution first (640x480) to avoid bandwidth issues
+                self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
+                self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
+                self.cap.set(cv2.CAP_PROP_FPS, 30)
+                
+                # Warm up camera (read a few frames to let auto-exposure settle)
+                for _ in range(5):
+                    self.cap.read()
                 
                 actual_width = int(self.cap.get(cv2.CAP_PROP_FRAME_WIDTH))
                 actual_height = int(self.cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-                print(f"✓ Webcam opened: {actual_width}x{actual_height}")
+                print(f"✓ Webcam opened: {actual_width}x{actual_height} (Backend: DSHOW)")
             else:
                 print(f"✗ Failed to open webcam {device_index}")
                 self._create_default_frame()
@@ -129,7 +137,8 @@ class CameraStream:
         elif self.source == "mock":
             return self._get_mock_frame()
         elif self.cap is not None:
-            return self._get_camera_frame()
+            with self.lock:
+                return self._get_camera_frame()
         else:
             return self.default_frame if hasattr(self, 'default_frame') else None
     
