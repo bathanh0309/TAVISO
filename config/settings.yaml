@@ -1,19 +1,27 @@
+# TAVISO Configuration
+# Traffic Violation Detection System - Da Nang
+
 camera:
-  source: "mock"  # "mock", "rtsp://username:password@camera-ip:554/stream", "http://..."
-  fps: 10
-  mock_images_dir: "data/mock_stream/images"
-  mock_video: "data/mock_stream/video.mp4"
+  source: 0  # 0=webcam, or "rtsp://username:password@ip:port/stream" for IP camera
+  fps: 15
+  width: 1280
+  height: 720
 
 database:
-  path: "data/database/plates.db"
+  path: "data/database/violations.db"
 
 csv:
-  path: "data/csv/records.csv"
+  path: "data/csv/violations.csv"
 
 model:
-  yolo_path: "models/yolo11n.pt"
+  yolo_path: "models/yolo11n.pt"  # Auto-download if not exists
   confidence: 0.5
-  ocr_languages: ['en', 'vi']  # For EasyOCR
+  vehicle_classes: [2, 3, 5, 7]  # car, motorcycle, bus, truck (COCO classes)
+
+ocr:
+  lang: "en"  # PaddleOCR language
+  use_gpu: false
+  use_angle_cls: true
 
 server:
   host: "0.0.0.0"
@@ -23,5 +31,16 @@ server:
 detection:
   save_crops: true
   crops_dir: "data/crops"
-  min_plate_area: 100  # Minimum area in pixels
-  cooldown_seconds: 5  # Avoid duplicate detections
+  min_plate_area: 100
+  cooldown_seconds: 3
+
+violation:
+  enable_wrong_way: true
+  enable_speeding: true
+  enable_line_crossing: true
+  speed_limit_kmh: 40
+  expected_direction: "down"  # Expected traffic flow direction
+
+storage:
+  save_images: true
+  images_dir: "data/images"

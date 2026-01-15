@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🚗 Hệ Thống Giám Sát Giao Thông Đà Nẵng</title>
+    <title>TAVISO - Hệ Thống Phát Hiện Vi Phạm Giao Thông</title>
     <link rel="stylesheet" href="/static/css/style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -17,8 +17,8 @@
         <header class="header">
             <div class="header-content">
                 <div class="header-left">
-                    <h1>🚗 Hệ Thống Giám Sát Giao Thông</h1>
-                    <p class="subtitle">📍 Thành phố Đà Nẵng, Việt Nam</p>
+                    <h1>TAVISO - Phát Hiện Vi Phạm Giao Thông</h1>
+                    <p class="subtitle">Thành phố Đà Nẵng, Việt Nam</p>
                 </div>
                 <div class="header-right">
                     <div class="status-indicator">
@@ -32,10 +32,10 @@
         <!-- Statistics Cards -->
         <div class="stats-grid">
             <div class="stat-card">
-                <div class="stat-icon">📊</div>
+                <div class="stat-icon">⚠️</div>
                 <div class="stat-content">
-                    <div class="stat-label">Tổng phát hiện</div>
-                    <div class="stat-value" id="total-detections">0</div>
+                    <div class="stat-label">Tổng vi phạm</div>
+                    <div class="stat-value" id="total-violations">0</div>
                 </div>
             </div>
 
@@ -43,23 +43,23 @@
                 <div class="stat-icon">📅</div>
                 <div class="stat-content">
                     <div class="stat-label">Hôm nay</div>
-                    <div class="stat-value" id="today-detections">0</div>
+                    <div class="stat-value" id="today-violations">0</div>
                 </div>
             </div>
 
-            <div class="stat-card">
-                <div class="stat-icon">⏰</div>
+            <div class="stat-card warning">
+                <div class="stat-icon">↩️</div>
                 <div class="stat-content">
-                    <div class="stat-label">Giờ vừa qua</div>
-                    <div class="stat-value" id="hour-detections">0</div>
+                    <div class="stat-label">Đi ngược chiều</div>
+                    <div class="stat-value" id="wrong-way-count">0</div>
                 </div>
             </div>
 
-            <div class="stat-card">
-                <div class="stat-icon">🚙</div>
+            <div class="stat-card danger">
+                <div class="stat-icon">🚀</div>
                 <div class="stat-content">
-                    <div class="stat-label">Biển số duy nhất</div>
-                    <div class="stat-value" id="unique-plates">0</div>
+                    <div class="stat-label">Vượt tốc độ</div>
+                    <div class="stat-value" id="speeding-count">0</div>
                 </div>
             </div>
         </div>
@@ -69,7 +69,7 @@
             <!-- Left Column: Camera Stream (Larger) -->
             <div class="camera-section">
                 <div class="section-header">
-                    <h2>📹 Camera Giám Sát</h2>
+                    <h2>Camera Giám Sát</h2>
                     <span class="status-badge live">
                         <span class="live-dot"></span>
                         TRỰC TIẾP
@@ -79,15 +79,15 @@
                     <img id="video-stream" src="/stream" alt="Camera Stream">
                     <div class="stream-overlay">
                         <div class="overlay-info">
-                            <span>🎯 AI Detection: YOLOv11</span>
+                            <span>AI: YOLOv11 + DeepSORT</span>
                             <span id="fps-counter">FPS: --</span>
                         </div>
                     </div>
                 </div>
                 <div class="stream-footer">
                     <div class="stream-info-item">
-                        <span class="info-label">Phát hiện gần nhất:</span>
-                        <span id="last-detection" class="info-value">Chưa có dữ liệu</span>
+                        <span class="info-label">Vi phạm gần nhất:</span>
+                        <span id="last-violation" class="info-value violation-alert">Chưa có</span>
                     </div>
                     <div class="stream-info-item">
                         <span class="info-label">Cập nhật:</span>
@@ -98,10 +98,10 @@
 
             <!-- Right Column: Tables -->
             <div class="tables-section">
-                <!-- Realtime Detections -->
+                <!-- Realtime Violations -->
                 <div class="table-card">
                     <div class="section-header">
-                        <h2>🔴 Theo dõi Realtime</h2>
+                        <h2>Vi Phạm Realtime</h2>
                         <button class="btn-refresh" onclick="refreshData()" title="Làm mới dữ liệu">
                             🔄
                         </button>
@@ -110,14 +110,15 @@
                         <table class="data-table">
                             <thead>
                                 <tr>
+                                    <th>Ngày</th>
+                                    <th>Giờ</th>
                                     <th>Biển số</th>
-                                    <th>Thời gian</th>
-                                    <th>Độ tin cậy</th>
+                                    <th>Loại vi phạm</th>
                                 </tr>
                             </thead>
                             <tbody id="realtime-tbody">
                                 <tr>
-                                    <td colspan="3" class="loading">Đang tải dữ liệu...</td>
+                                    <td colspan="4" class="loading">Đang tải dữ liệu...</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -127,7 +128,7 @@
                 <!-- History Storage -->
                 <div class="table-card">
                     <div class="section-header">
-                        <h2>💾 Lịch sử Lưu trữ</h2>
+                        <h2>Lịch Sử Lưu Trữ</h2>
                         <div class="pagination-controls">
                             <button id="prev-btn" onclick="prevPage()" disabled aria-label="Trang trước">
                                 ←
@@ -143,14 +144,15 @@
                             <thead>
                                 <tr>
                                     <th>ID</th>
+                                    <th>Ngày</th>
+                                    <th>Giờ</th>
                                     <th>Biển số</th>
-                                    <th>Thời gian</th>
-                                    <th>Độ tin cậy</th>
+                                    <th>Loại vi phạm</th>
                                 </tr>
                             </thead>
                             <tbody id="history-tbody">
                                 <tr>
-                                    <td colspan="4" class="loading">Đang tải dữ liệu...</td>
+                                    <td colspan="5" class="loading">Đang tải dữ liệu...</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -162,11 +164,12 @@
         <!-- Footer -->
         <footer class="footer">
             <div class="footer-content">
-                <span>© 2026 Hệ Thống Giám Sát Giao Thông Đà Nẵng</span>
+                <span>© 2026 TAVISO - Hệ Thống Phát Hiện Vi Phạm Giao Thông Đà Nẵng</span>
                 <span class="separator">|</span>
-                <span>Powered by YOLOv11 + EasyOCR</span>
+                <span>Powered by YOLOv11 + DeepSORT + PaddleOCR</span>
                 <span class="separator">|</span>
-                <span>Phát triển bởi <a href="https://github.com/bathanh0309" target="_blank">@bathanh0309</a></span>
+                <span>Phát triển bởi <a href="https://github.com/bathanh0309" target="_blank"
+                        rel="noopener noreferrer">@bathanh0309</a></span>
             </div>
         </footer>
     </div>

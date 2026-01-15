@@ -1,426 +1,252 @@
 /**
- * TAVISO - Da Nang Traffic Monitoring System
- * Frontend JavaScript
+ * TAVISO - Traffic Violation Detection System
+ * Frontend JavaScript for violation display
  */
 
-// ========== CONFIGURATION ==========
+// Configuration
 const CONFIG = {
     API_BASE: '',
-    UPDATE_INTERVAL: 3000, // 3 seconds
-    REALTIME_LIMIT: 5,
-    ITEMS_PER_PAGE: 15,
-    RETRY_DELAY: 2000,
-    FPS_UPDATE_INTERVAL: 1000
+    REFRESH_INTERVAL: 3000,  // 3 seconds
+    HISTORY_PAGE_SIZE: 20
 };
 
-// ========== STATE ==========
-const state = {
-    currentPage: 1,
-    lastUpdateTime: null,
-    frameCount: 0,
-    lastFpsUpdate: Date.now(),
-    isStreamConnected: false
-};
+// State
+let currentPage = 1;
+let totalViolations = 0;
+let lastViolationId = 0;
 
-// ========== INITIALIZATION ==========
-document.addEventListener('DOMContentLoaded', function () {
-    console.log('🚀 TAVISO System Initialized');
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', () => {
+    console.log('TAVISO Dashboard initializing...');
 
-    // Load initial data
+    // Initial data load
     refreshData();
 
-    // Auto-refresh data
-    setInterval(refreshData, CONFIG.UPDATE_INTERVAL);
+    // Start auto-refresh
+    setInterval(refreshData, CONFIG.REFRESH_INTERVAL);
 
-    // Setup stream monitoring
-    setupStreamErrorHandling();
-
-    // FPS counter
-    setInterval(updateFPS, CONFIG.FPS_UPDATE_INTERVAL);
-
-    console.log('✓ All systems ready');
+    // Update clock
+    updateClock();
+    setInterval(updateClock, 1000);
 });
 
-// ========== DATA FETCHING ==========
-
 /**
- * Refresh all data from API
+ * Refresh all data
  */
 async function refreshData() {
     try {
         await Promise.all([
-            fetchStats(),
-            fetchRealtimePlates(),
-            fetchHistoryPlates()
+            loadViolationStats(),
+            loadRealtimeViolations(),
+            loadViolationHistory()
         ]);
-
-        updateLastUpdateTime();
     } catch (error) {
-        console.error('❌ Error refreshing data:', error);
+        console.error('Error refreshing data:', error);
     }
 }
 
 /**
- * Fetch statistics from API
+ * Load violation statistics
  */
-async function fetchStats() {
+async function loadViolationStats() {
     try {
-        const response = await fetch(`${CONFIG.API_BASE}/api/stats`);
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const response = await fetch(`${CONFIG.API_BASE}/api/violations/stats`);
+        if (!response.ok) throw new Error('Failed to fetch stats');
+
+        const stats = await response.json();
+
+        // Update stat cards
+        updateElement('total-violations', stats.total_violations);
+        updateElement('today-violations', stats.today_violations);
+        updateElement('wrong-way-count', stats.wrong_way_count);
+        updateElement('speeding-count', stats.speeding_count);
+
+        // Update last violation display
+        if (stats.last_violation) {
+            const last = stats.last_violation;
+            updateElement('last-violation',
+                `${last.license_plate} - ${last.violation_type_vi} (${last.time})`
+            );
+        }
+
+    } catch (error) {
+        console.error('Error loading stats:', error);
+    }
+}
+
+/**
+ * Load realtime violations
+ */
+async function loadRealtimeViolations() {
+    try {
+        const response = await fetch(`${CONFIG.API_BASE}/api/violations/realtime?limit=10`);
+        if (!response.ok) throw new Error('Failed to fetch realtime violations');
 
         const data = await response.json();
+        const tbody = document.getElementById('realtime-tbody');
 
-        // Update statistics cards
-        updateElement('total-detections', data.total_detections || 0);
-        updateElement('today-detections', data.today_detections || 0);
-        updateElement('hour-detections', data.this_hour_detections || 0);
-        updateElement('unique-plates', data.unique_plates || 0);
-
-        // Update last detection
-        if (data.last_detection) {
-            const lastTime = formatVietnameseDateTime(data.last_detection);
-            updateElement('last-detection', lastTime);
-        } else {
-            updateElement('last-detection', 'Chưa có dữ liệu');
+        if (!data.violations || data.violations.length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="4" class="loading">Chưa có vi phạm nào</td>
+                </tr>
+            `;
+            return;
         }
 
+        let html = '';
+        data.violations.forEach((v, index) => {
+            const isNew = v.id > lastViolationId;
+            html += `
+                <tr class="${isNew ? 'new-violation' : ''}">
+                    <td>${v.date}</td>
+                    <td>${v.time}</td>
+                    <td><strong>${v.license_plate}</strong></td>
+                    <td>${getViolationBadge(v.violation_type_vi)}</td>
+                </tr>
+            `;
+        });
+
+        tbody.innerHTML = html;
+
+        // Update last violation ID for animation
+        if (data.violations.length > 0) {
+            lastViolationId = Math.max(lastViolationId, data.violations[0].id);
+        }
+
+        totalViolations = data.total_count;
+
     } catch (error) {
-        console.error('❌ Error fetching stats:', error);
+        console.error('Error loading realtime violations:', error);
     }
 }
 
 /**
- * Fetch real-time plates (last N detections)
+ * Load violation history with pagination
  */
-async function fetchRealtimePlates() {
+async function loadViolationHistory() {
     try {
+        const offset = (currentPage - 1) * CONFIG.HISTORY_PAGE_SIZE;
         const response = await fetch(
-            `${CONFIG.API_BASE}/api/plates?limit=${CONFIG.REALTIME_LIMIT}&offset=0`
+            `${CONFIG.API_BASE}/api/violations?limit=${CONFIG.HISTORY_PAGE_SIZE}&offset=${offset}`
         );
+        if (!response.ok) throw new Error('Failed to fetch history');
 
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const violations = await response.json();
+        const tbody = document.getElementById('history-tbody');
 
-        const plates = await response.json();
-        displayRealtimePlates(plates);
+        if (violations.length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="5" class="loading">Không có dữ liệu</td>
+                </tr>
+            `;
+            updatePagination(0);
+            return;
+        }
+
+        let html = '';
+        violations.forEach(v => {
+            html += `
+                <tr>
+                    <td>${v.id}</td>
+                    <td>${v.date}</td>
+                    <td>${v.time}</td>
+                    <td><strong>${v.license_plate}</strong></td>
+                    <td>${getViolationBadge(v.violation_type_vi)}</td>
+                </tr>
+            `;
+        });
+
+        tbody.innerHTML = html;
+        updatePagination(violations.length);
 
     } catch (error) {
-        console.error('❌ Error fetching realtime plates:', error);
-        showTableError('realtime-tbody', 3, 'Lỗi tải dữ liệu');
+        console.error('Error loading history:', error);
     }
 }
 
 /**
- * Fetch history plates (paginated)
+ * Get HTML badge for violation type
  */
-async function fetchHistoryPlates() {
-    try {
-        const offset = (state.currentPage - 1) * CONFIG.ITEMS_PER_PAGE;
-        const response = await fetch(
-            `${CONFIG.API_BASE}/api/plates?limit=${CONFIG.ITEMS_PER_PAGE}&offset=${offset}`
-        );
+function getViolationBadge(violationType) {
+    let className = '';
 
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-
-        const plates = await response.json();
-        displayHistoryPlates(plates);
-
-    } catch (error) {
-        console.error('❌ Error fetching history plates:', error);
-        showTableError('history-tbody', 4, 'Lỗi tải dữ liệu');
-    }
-}
-
-// ========== DATA DISPLAY ==========
-
-/**
- * Display realtime plates in table
- */
-function displayRealtimePlates(plates) {
-    const tbody = document.getElementById('realtime-tbody');
-
-    if (!plates || plates.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="3" class="loading">Chưa có phát hiện gần đây</td></tr>';
-        return;
+    if (violationType.includes('ngược chiều')) {
+        className = 'wrong-way';
+    } else if (violationType.includes('tốc độ')) {
+        className = 'speeding';
+    } else if (violationType.includes('vạch')) {
+        className = 'line-crossing';
     }
 
-    tbody.innerHTML = plates.map(plate => `
-        <tr>
-            <td><strong style="color: var(--primary-light); font-size: 1rem;">${escapeHtml(plate.plate_number)}</strong></td>
-            <td>${formatVietnameseTime(plate.timestamp)}</td>
-            <td>${formatConfidence(plate.confidence)}</td>
-        </tr>
-    `).join('');
+    return `<span class="violation-badge ${className}">${violationType}</span>`;
 }
 
 /**
- * Display history plates in table
+ * Update pagination controls
  */
-function displayHistoryPlates(plates) {
-    const tbody = document.getElementById('history-tbody');
-
-    if (!plates || plates.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="4" class="loading">Chưa có dữ liệu lịch sử</td></tr>';
-        updatePaginationButtons(0);
-        return;
-    }
-
-    tbody.innerHTML = plates.map(plate => `
-        <tr>
-            <td><span style="color: var(--text-muted);">#${plate.id}</span></td>
-            <td><strong>${escapeHtml(plate.plate_number)}</strong></td>
-            <td>${formatVietnameseDateTime(plate.timestamp)}</td>
-            <td>${formatConfidence(plate.confidence)}</td>
-        </tr>
-    `).join('');
-
-    updatePaginationButtons(plates.length);
-}
-
-// ========== FORMATTING UTILITIES ==========
-
-/**
- * Format timestamp to Vietnamese time (HH:mm:ss)
- */
-function formatVietnameseTime(timestamp) {
-    if (!timestamp) return '--:--:--';
-
-    const date = new Date(timestamp);
-    return date.toLocaleTimeString('vi-VN', {
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit'
-    });
-}
-
-/**
- * Format timestamp to Vietnamese datetime
- */
-function formatVietnameseDateTime(timestamp) {
-    if (!timestamp) return 'Không xác định';
-
-    const date = new Date(timestamp);
-    return date.toLocaleString('vi-VN', {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit'
-    });
-}
-
-/**
- * Format confidence as percentage with color
- */
-function formatConfidence(confidence) {
-    if (confidence === null || confidence === undefined) return '--';
-
-    const percent = (confidence * 100).toFixed(0);
-    let color;
-
-    if (percent >= 80) {
-        color = 'var(--accent)';
-    } else if (percent >= 60) {
-        color = 'var(--warning)';
-    } else {
-        color = 'var(--danger)';
-    }
-
-    return `<span style="color: ${color}; font-weight: 700; font-size: 0.9rem;">${percent}%</span>`;
-}
-
-/**
- * Escape HTML to prevent XSS
- */
-function escapeHtml(text) {
-    const map = {
-        '&': '&amp;',
-        '<': '&lt;',
-        '>': '&gt;',
-        '"': '&quot;',
-        "'": '&#039;'
-    };
-    return String(text).replace(/[&<>"']/g, m => map[m]);
-}
-
-// ========== PAGINATION ==========
-
-/**
- * Update pagination button states
- */
-function updatePaginationButtons(count) {
+function updatePagination(itemsLoaded) {
+    const pageInfo = document.getElementById('page-info');
     const prevBtn = document.getElementById('prev-btn');
     const nextBtn = document.getElementById('next-btn');
-    const pageInfo = document.getElementById('page-info');
 
-    if (!prevBtn || !nextBtn || !pageInfo) return;
+    pageInfo.innerHTML = `Trang <strong>${currentPage}</strong>`;
 
-    prevBtn.disabled = state.currentPage === 1;
-    nextBtn.disabled = count < CONFIG.ITEMS_PER_PAGE;
-
-    pageInfo.innerHTML = `Trang <strong>${state.currentPage}</strong>`;
+    prevBtn.disabled = currentPage <= 1;
+    nextBtn.disabled = itemsLoaded < CONFIG.HISTORY_PAGE_SIZE;
 }
 
 /**
- * Navigate to previous page
+ * Go to previous page
  */
 function prevPage() {
-    if (state.currentPage > 1) {
-        state.currentPage--;
-        fetchHistoryPlates();
+    if (currentPage > 1) {
+        currentPage--;
+        loadViolationHistory();
     }
 }
 
 /**
- * Navigate to next page
+ * Go to next page
  */
 function nextPage() {
-    state.currentPage++;
-    fetchHistoryPlates();
+    currentPage++;
+    loadViolationHistory();
 }
 
-// ========== STREAM HANDLING ==========
-
 /**
- * Setup stream error handling and reconnection
+ * Update element text content
  */
-function setupStreamErrorHandling() {
-    const streamImg = document.getElementById('video-stream');
-
-    if (!streamImg) {
-        console.warn('⚠️ Stream image element not found');
-        return;
+function updateElement(id, value) {
+    const el = document.getElementById(id);
+    if (el) {
+        el.textContent = value;
     }
-
-    // Handle stream errors
-    streamImg.onerror = function () {
-        console.warn('⚠️ Stream connection lost, retrying...');
-        state.isStreamConnected = false;
-
-        // Retry after delay
-        setTimeout(() => {
-            streamImg.src = '/stream?' + Date.now();
-        }, CONFIG.RETRY_DELAY);
-    };
-
-    // Handle successful stream load
-    streamImg.onload = function () {
-        if (!state.isStreamConnected) {
-            console.log('✓ Stream connected');
-            state.isStreamConnected = true;
-        }
-        state.frameCount++;
-    };
 }
 
 /**
- * Update FPS counter
+ * Update clock display
  */
-function updateFPS() {
-    const now = Date.now();
-    const elapsed = (now - state.lastFpsUpdate) / 1000;
-    const fps = Math.round(state.frameCount / elapsed);
-
-    const fpsElement = document.getElementById('fps-counter');
-    if (fpsElement) {
-        fpsElement.textContent = `FPS: ${state.isStreamConnected ? fps : '--'}`;
-    }
-
-    // Reset counters
-    state.frameCount = 0;
-    state.lastFpsUpdate = now;
-}
-
-// ========== UI UTILITIES ==========
-
-/**
- * Update last update time display
- */
-function updateLastUpdateTime() {
+function updateClock() {
     const now = new Date();
     const timeStr = now.toLocaleTimeString('vi-VN', {
         hour: '2-digit',
         minute: '2-digit',
         second: '2-digit'
     });
-
     updateElement('last-update', timeStr);
-    state.lastUpdateTime = now;
 }
 
 /**
- * Update element text content safely
+ * Handle video stream errors
  */
-function updateElement(id, content) {
-    const element = document.getElementById(id);
-    if (element) {
-        element.textContent = content;
-    }
-}
-
-/**
- * Show error message in table
- */
-function showTableError(tbodyId, colspan, message) {
-    const tbody = document.getElementById(tbodyId);
-    if (tbody) {
-        tbody.innerHTML = `<tr><td colspan="${colspan}" class="loading">${escapeHtml(message)}</td></tr>`;
-    }
-}
-
-// ========== EXPORT FUNCTIONALITY (Optional) ==========
-
-/**
- * Export data to CSV
- */
-async function exportToCSV() {
-    try {
-        const response = await fetch(`${CONFIG.API_BASE}/api/plates?limit=10000&offset=0`);
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-
-        const plates = await response.json();
-
-        // Create CSV content
-        let csv = 'ID,Biển số,Thời gian,Độ tin cậy\n';
-        plates.forEach(plate => {
-            csv += `${plate.id},"${plate.plate_number}","${plate.timestamp}",${plate.confidence}\n`;
-        });
-
-        // Download file
-        const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
-        const url = window.URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = `taviso_export_${new Date().toISOString().split('T')[0]}.csv`;
-        link.click();
-
-        console.log('✓ Exported to CSV successfully');
-    } catch (error) {
-        console.error('❌ Export error:', error);
-        alert('Lỗi khi xuất dữ liệu. Vui lòng thử lại.');
-    }
-}
-
-// ========== KEYBOARD SHORTCUTS (Optional) ==========
-
-document.addEventListener('keydown', function (e) {
-    // Ctrl/Cmd + R: Refresh data
-    if ((e.ctrlKey || e.metaKey) && e.key === 'r') {
-        e.preventDefault();
-        refreshData();
-        console.log('🔄 Manual refresh triggered');
-    }
-
-    // Arrow keys for pagination
-    if (e.key === 'ArrowLeft') {
-        prevPage();
-    } else if (e.key === 'ArrowRight') {
-        nextPage();
-    }
+document.getElementById('video-stream')?.addEventListener('error', function () {
+    console.error('Video stream error');
+    this.alt = 'Camera không khả dụng';
 });
 
-// Make functions globally accessible
+// Export functions for global access
 window.refreshData = refreshData;
 window.prevPage = prevPage;
 window.nextPage = nextPage;
-window.exportToCSV = exportToCSV;
