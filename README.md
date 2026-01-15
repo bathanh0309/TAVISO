@@ -12,7 +12,6 @@ Hệ thống nhận diện biển số xe thời gian thực sử dụng **YOLOv
 - **AI Detection**: Nhận diện biển số xe Việt Nam bằng YOLOv11 + EasyOCR
 - **Data Logging**: Tự động lưu vào SQLite database và CSV file
 - **Thống kê Real-time**: Dashboard hiển thị số liệu theo giờ, ngày
-- **Đa nền tảng**: Chạy trên Linux và Windows
 - **Giao diện hiện đại**: Dark theme, glassmorphism, responsive design
 - **Tiếng Việt hoàn toàn**: Phù hợp triển khai Đà Nẵng
 
@@ -31,25 +30,25 @@ Giao diện hiện đại với dark theme, glassmorphism và Vietnamese localiz
 
 - Python 3.10+
 - pip
-- (Optional) CUDA GPU cho tốc độ cao hơn
+- Windows 10/11
 
 ### Bước 1: Cài đặt
 
-```bash
+```powershell
 # Clone repository
 git clone https://github.com/bathanh0309/TAVISO.git
 cd TAVISO
 
 # Tạo virtual environment
-python3 -m venv .venv
+python -m venv .venv
 
 # Kích hoạt virtual environment
-# Trên Linux/macOS:
-source .venv/bin/activate
-# Trên Windows:
 .venv\Scripts\activate
 
-# Cài đặt dependencies
+# Cài đặt PyTorch CPU (quan trọng!)
+pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
+
+# Cài đặt các dependencies còn lại
 pip install -r requirements.txt
 ```
 
@@ -57,27 +56,18 @@ pip install -r requirements.txt
 
 **Cách 1: Sử dụng script tự động (Khuyến nghị)**
 
-Trên **Linux/macOS**:
-```bash
-./run.sh
-```
-
-Trên **Windows**:
-```cmd
-run.bat
+```powershell
+.\\run.bat
 ```
 
 **Cách 2: Chạy thủ công**
 
-```bash
+```powershell
 # Kích hoạt virtual environment trước
-source .venv/bin/activate  # Linux/macOS
-# hoặc
-.venv\Scripts\activate     # Windows
+.venv\Scripts\activate
 
 # Chạy server
-python3 -m backend.main    # Linux/macOS
-python -m backend.main     # Windows
+python -m backend.main
 ```
 
 ### Bước 3: Truy cập Dashboard
