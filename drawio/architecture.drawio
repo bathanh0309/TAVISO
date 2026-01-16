@@ -1,133 +1,204 @@
 <mxfile host="65bd71144e">
     <diagram name="TAVISO - System Overview" id="taviso-diagram">
-        <mxGraphModel dx="1493" dy="840" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2200" pageHeight="900" background="#ffffff" math="0" shadow="0">
+        <mxGraphModel dx="1343" dy="775" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2200" pageHeight="1000" background="#ffffff" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
                 <mxCell id="title" value="🚦 TAVISO - Traffic AI Vision Surveillance System" style="text;html=1;align=center;verticalAlign=middle;fontSize=26;fontStyle=1;fontColor=#000000;" parent="1" vertex="1">
-                    <mxGeometry x="400" y="20" width="1400" height="50" as="geometry"/>
+                    <mxGeometry x="657" y="8" width="887" height="50" as="geometry"/>
                 </mxCell>
-                <mxCell id="input_layer" value="INPUT LAYER" style="swimlane;startSize=30;fillColor=#e3f2fd;strokeColor=#1e88e5;fontColor=#000000;fontSize=13;fontStyle=1;" vertex="1" parent="1">
-                    <mxGeometry x="50" y="100" width="280" height="296" as="geometry"/>
+                <mxCell id="input_layer" value="INPUT LAYER" style="swimlane;startSize=30;fillColor=#e3f2fd;strokeColor=#1e88e5;fontColor=#000000;fontSize=13;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="425" y="82" width="280" height="410" as="geometry"/>
                 </mxCell>
                 <mxCell id="cam" value="1️⃣ IP Camera&#10;Camera IP qua RTSP&#10;Truyền luồng video trực tiếp" style="rounded=1;fillColor=#ffffff;strokeColor=#333333;fontColor=#000000;fontSize=11;align=center;verticalAlign=middle;whiteSpace=wrap;" parent="input_layer" vertex="1">
-                    <mxGeometry x="30" y="60" width="147" height="80" as="geometry"/>
+                    <mxGeometry x="30" y="50" width="220" height="80" as="geometry"/>
                 </mxCell>
-                <mxCell id="cfg" value="⚙️ Config File&#10;File cấu hình YAML&#10;Tham số hệ thống" style="rounded=1;fillColor=#ffffff;strokeColor=#333333;fontColor=#000000;fontSize=11;align=center;verticalAlign=middle;whiteSpace=wrap;" parent="input_layer" vertex="1">
-                    <mxGeometry x="30" y="180" width="143" height="80" as="geometry"/>
+                <mxCell id="zone_cfg" value="2️⃣ Zone Configuration&#10;Cấu hình vùng giám sát&#10;Định nghĩa zones, lines" style="rounded=1;fillColor=#ffffff;strokeColor=#333333;fontColor=#000000;fontSize=11;align=center;verticalAlign=middle;whiteSpace=wrap;" vertex="1" parent="input_layer">
+                    <mxGeometry x="30" y="160" width="220" height="80" as="geometry"/>
                 </mxCell>
-                <mxCell id="capture_layer" value="CAPTURE &amp; BUFFER" style="swimlane;startSize=30;fillColor=#e8f5e9;strokeColor=#43a047;fontColor=#000000;fontSize=13;fontStyle=1;" vertex="1" parent="1">
-                    <mxGeometry x="400" y="100" width="280" height="298" as="geometry"/>
+                <mxCell id="cfg" value="3️⃣ Config File&#10;File cấu hình YAML&#10;Tham số hệ thống" style="rounded=1;fillColor=#ffffff;strokeColor=#333333;fontColor=#000000;fontSize=11;align=center;verticalAlign=middle;whiteSpace=wrap;" parent="input_layer" vertex="1">
+                    <mxGeometry x="30" y="270" width="220" height="80" as="geometry"/>
                 </mxCell>
-                <mxCell id="rtsp" value="2️⃣ RTSP Capture&#10;Thu thập luồng video&#10;Giải mã RTSP stream" style="rounded=1;fillColor=#ffffff;strokeColor=#333333;fontColor=#000000;fontSize=11;align=center;verticalAlign=middle;whiteSpace=wrap;" parent="capture_layer" vertex="1">
-                    <mxGeometry x="30" y="60" width="149" height="80" as="geometry"/>
+                <mxCell id="capture_layer" value="CAPTURE &amp; BUFFER" style="swimlane;startSize=30;fillColor=#e8f5e9;strokeColor=#43a047;fontColor=#000000;fontSize=13;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="737" y="82" width="280" height="298" as="geometry"/>
                 </mxCell>
-                <mxCell id="queue" value="3️⃣ Frame Queue&#10;Hàng đợi khung hình&#10;Buffer đa luồng" style="rounded=1;fillColor=#ffffff;strokeColor=#333333;fontColor=#000000;fontSize=11;align=center;verticalAlign=middle;whiteSpace=wrap;" parent="capture_layer" vertex="1">
-                    <mxGeometry x="106" y="180" width="144" height="80" as="geometry"/>
-                </mxCell>
-                <mxCell id="cv_layer" value="COMPUTER VISION" style="swimlane;startSize=30;fillColor=#fff3e0;strokeColor=#fb8c00;fontColor=#000000;fontSize=13;fontStyle=1;" vertex="1" parent="1">
-                    <mxGeometry x="53" y="468" width="977" height="313" as="geometry"/>
-                </mxCell>
-                <mxCell id="veh" value="4️⃣ Vehicle Detection&#10;Phát hiện phương tiện&#10;YOLO11s model" style="rounded=1;fillColor=#ffffff;strokeColor=#333333;fontColor=#000000;fontSize=11;align=center;verticalAlign=middle;whiteSpace=wrap;" parent="cv_layer" vertex="1">
-                    <mxGeometry x="12" y="62" width="158" height="80" as="geometry"/>
-                </mxCell>
-                <mxCell id="plate" value="5️⃣ Plate Detection&#10;Phát hiện biển số&#10;YOLO11n-plate model" style="rounded=1;fillColor=#ffffff;strokeColor=#333333;fontColor=#000000;fontSize=11;align=center;verticalAlign=middle;whiteSpace=wrap;" parent="cv_layer" vertex="1">
-                    <mxGeometry x="183" y="162" width="151" height="80" as="geometry"/>
-                </mxCell>
-                <mxCell id="track" value="6️⃣ Object Tracking&#10;Theo dõi đối tượng&#10;ByteTrack algorithm" style="rounded=1;fillColor=#ffffff;strokeColor=#333333;fontColor=#000000;fontSize=11;align=center;verticalAlign=middle;whiteSpace=wrap;" parent="cv_layer" vertex="1">
-                    <mxGeometry x="371" y="162" width="158" height="80" as="geometry"/>
-                </mxCell>
-                <mxCell id="ocr" value="7️⃣ OCR Recognition&#10;Nhận dạng ký tự&#10;PaddleOCR engine" style="rounded=1;fillColor=#ffffff;strokeColor=#333333;fontColor=#000000;fontSize=11;align=center;verticalAlign=middle;whiteSpace=wrap;" parent="cv_layer" vertex="1">
-                    <mxGeometry x="561" y="162" width="142" height="80" as="geometry"/>
-                </mxCell>
-                <mxCell id="arrow5" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#fb8c00;fontColor=#000000;" edge="1" parent="cv_layer" source="track" target="ocr">
-                    <mxGeometry relative="1" as="geometry"/>
-                </mxCell>
-                <mxCell id="logic" value="8️⃣ Logic Layer&#10;Lọc trùng lặp&#10;Điều phối luồng xử lý" style="rounded=1;fillColor=#ffffff;strokeColor=#333333;fontColor=#000000;fontSize=11;align=center;verticalAlign=middle;whiteSpace=wrap;" parent="cv_layer" vertex="1">
-                    <mxGeometry x="732" y="162" width="146" height="80" as="geometry"/>
-                </mxCell>
-                <mxCell id="arrow6" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#fb8c00;fontColor=#000000;" edge="1" parent="cv_layer" source="ocr" target="logic">
-                    <mxGeometry relative="1" as="geometry"/>
-                </mxCell>
-                <mxCell id="storage_layer" value="DATA STORAGE" style="swimlane;startSize=30;fillColor=#ede7f6;strokeColor=#5e35b1;fontColor=#000000;fontSize=13;fontStyle=1;" vertex="1" parent="1">
-                    <mxGeometry x="1100" y="100" width="293" height="650" as="geometry"/>
-                </mxCell>
-                <mxCell id="db" value="9️⃣ SQLite Database&#10;Cơ sở dữ liệu&#10;Lưu thông tin biển số" style="rounded=1;fillColor=#ffffff;strokeColor=#333333;fontColor=#000000;fontSize=11;align=center;verticalAlign=middle;whiteSpace=wrap;" parent="storage_layer" vertex="1">
+                <mxCell id="rtsp" value="4️⃣ RTSP Capture&#10;Thu thập luồng video&#10;Giải mã RTSP stream" style="rounded=1;fillColor=#ffffff;strokeColor=#333333;fontColor=#000000;fontSize=11;align=center;verticalAlign=middle;whiteSpace=wrap;" parent="capture_layer" vertex="1">
                     <mxGeometry x="30" y="60" width="220" height="80" as="geometry"/>
                 </mxCell>
-                <mxCell id="csv" value="🔟 CSV Export&#10;Xuất dữ liệu CSV&#10;Báo cáo định kỳ" style="rounded=1;fillColor=#ffffff;strokeColor=#333333;fontColor=#000000;fontSize=11;align=center;verticalAlign=middle;whiteSpace=wrap;" parent="storage_layer" vertex="1">
-                    <mxGeometry x="30" y="180" width="220" height="80" as="geometry"/>
+                <mxCell id="queue" value="5️⃣ Frame Queue&#10;Hàng đợi khung hình&#10;Buffer đa luồng" style="rounded=1;fillColor=#ffffff;strokeColor=#333333;fontColor=#000000;fontSize=11;align=center;verticalAlign=middle;whiteSpace=wrap;" parent="capture_layer" vertex="1">
+                    <mxGeometry x="30" y="183" width="220" height="80" as="geometry"/>
                 </mxCell>
-                <mxCell id="img" value="1️⃣1️⃣ Evidence Images&#10;Ảnh bằng chứng&#10;Lưu khung hình vi phạm" style="rounded=1;fillColor=#ffffff;strokeColor=#333333;fontColor=#000000;fontSize=11;align=center;verticalAlign=middle;whiteSpace=wrap;" parent="storage_layer" vertex="1">
-                    <mxGeometry x="30" y="300" width="220" height="80" as="geometry"/>
+                <mxCell id="cv_layer" value="COMPUTER VISION &amp; VIOLATION DETECTION" style="swimlane;startSize=30;fillColor=#fff3e0;strokeColor=#fb8c00;fontColor=#000000;fontSize=13;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="425" y="524" width="592" height="410" as="geometry"/>
                 </mxCell>
-                <mxCell id="api_layer" value="API LAYER" style="swimlane;startSize=30;fillColor=#e1f5fe;strokeColor=#0288d1;fontColor=#000000;fontSize=13;fontStyle=1;" vertex="1" parent="1">
-                    <mxGeometry x="1450" y="100" width="280" height="650" as="geometry"/>
+                <mxCell id="veh" value="6️⃣ Vehicle Detection&#10;Phát hiện phương tiện&#10;YOLO11s model" style="rounded=1;fillColor=#ffffff;strokeColor=#333333;fontColor=#000000;fontSize=11;align=center;verticalAlign=middle;whiteSpace=wrap;" parent="cv_layer" vertex="1">
+                    <mxGeometry x="30" y="50" width="170" height="80" as="geometry"/>
                 </mxCell>
-                <mxCell id="api1" value="1️⃣2️⃣ Video Stream API&#10;Truyền video đã xử lý&#10;FastAPI endpoint" style="rounded=1;fillColor=#ffffff;strokeColor=#333333;fontColor=#000000;fontSize=11;align=center;verticalAlign=middle;whiteSpace=wrap;" parent="api_layer" vertex="1">
-                    <mxGeometry x="30" y="60" width="220" height="80" as="geometry"/>
+                <mxCell id="plate" value="7️⃣ Plate Detection&#10;Phát hiện biển số&#10;YOLO11n-plate model" style="rounded=1;fillColor=#ffffff;strokeColor=#333333;fontColor=#000000;fontSize=11;align=center;verticalAlign=middle;whiteSpace=wrap;" parent="cv_layer" vertex="1">
+                    <mxGeometry x="30" y="160" width="170" height="80" as="geometry"/>
                 </mxCell>
-                <mxCell id="api2" value="1️⃣3️⃣ Data Query API&#10;Truy vấn dữ liệu&#10;/plates, /stats endpoints" style="rounded=1;fillColor=#ffffff;strokeColor=#333333;fontColor=#000000;fontSize=11;align=center;verticalAlign=middle;whiteSpace=wrap;" parent="api_layer" vertex="1">
-                    <mxGeometry x="30" y="180" width="220" height="80" as="geometry"/>
+                <mxCell id="track" value="8️⃣ Object Tracking&#10;Theo dõi đối tượng&#10;ByteTrack algorithm" style="rounded=1;fillColor=#ffffff;strokeColor=#333333;fontColor=#000000;fontSize=11;align=center;verticalAlign=middle;whiteSpace=wrap;" parent="cv_layer" vertex="1">
+                    <mxGeometry x="30" y="270" width="170" height="80" as="geometry"/>
                 </mxCell>
-                <mxCell id="api3" value="1️⃣4️⃣ Evidence API&#10;Truy xuất bằng chứng&#10;/evidence endpoint" style="rounded=1;fillColor=#ffffff;strokeColor=#333333;fontColor=#000000;fontSize=11;align=center;verticalAlign=middle;whiteSpace=wrap;" parent="api_layer" vertex="1">
-                    <mxGeometry x="30" y="300" width="220" height="80" as="geometry"/>
+                <mxCell id="ocr" value="9️⃣ OCR Recognition&#10;Nhận dạng ký tự&#10;PaddleOCR engine" style="rounded=1;fillColor=#ffffff;strokeColor=#333333;fontColor=#000000;fontSize=11;align=center;verticalAlign=middle;whiteSpace=wrap;" parent="cv_layer" vertex="1">
+                    <mxGeometry x="230" y="160" width="170" height="80" as="geometry"/>
                 </mxCell>
-                <mxCell id="ui_layer" value="FRONTEND" style="swimlane;startSize=30;fillColor=#f1f8e9;strokeColor=#689f38;fontColor=#000000;fontSize=13;fontStyle=1;" vertex="1" parent="1">
-                    <mxGeometry x="1800" y="100" width="280" height="650" as="geometry"/>
+                <mxCell id="violation" value="🔟 Violation Detection&#10;Phát hiện vi phạm&#10;Speed | Zone | Line crossing" style="rounded=1;fillColor=#ffffff;strokeColor=#333333;fontColor=#000000;fontSize=11;align=center;verticalAlign=middle;whiteSpace=wrap;" vertex="1" parent="cv_layer">
+                    <mxGeometry x="230" y="270" width="170" height="80" as="geometry"/>
                 </mxCell>
-                <mxCell id="dash" value="1️⃣5️⃣ Web Dashboard&#10;Giao diện người dùng&#10;Live | Search | Analytics" style="rounded=1;fillColor=#ffffff;strokeColor=#333333;fontColor=#000000;fontSize=11;align=center;verticalAlign=middle;whiteSpace=wrap;" parent="ui_layer" vertex="1">
-                    <mxGeometry x="30" y="60" width="220" height="80" as="geometry"/>
+                <mxCell id="logic" value="1️⃣1️⃣ Logic Layer&#10;Lọc trùng lặp&#10;Điều phối luồng xử lý" style="rounded=1;fillColor=#ffffff;strokeColor=#333333;fontColor=#000000;fontSize=11;align=center;verticalAlign=middle;whiteSpace=wrap;" parent="cv_layer" vertex="1">
+                    <mxGeometry x="414" y="60" width="160" height="80" as="geometry"/>
                 </mxCell>
-                <mxCell id="arrow1" value="RTSP" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;strokeWidth=2;strokeColor=#1e88e5;fontColor=#000000;labelBackgroundColor=none;fontSize=11;fontStyle=1;" edge="1" parent="1" source="cam" target="rtsp">
+                <mxCell id="arrow3" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#fb8c00;fontColor=#000000;" parent="cv_layer" source="veh" target="plate" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="arrow2" value="Frame Buffer" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;strokeWidth=2;strokeColor=#43a047;fontColor=#000000;labelBackgroundColor=none;fontSize=11;fontStyle=1;" edge="1" parent="1" source="queue" target="veh">
+                <mxCell id="arrow4" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#fb8c00;fontColor=#000000;" parent="cv_layer" source="plate" target="track" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="arrow3" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#fb8c00;fontColor=#000000;" edge="1" parent="1" source="veh" target="plate">
+                <mxCell id="arrow5" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#fb8c00;fontColor=#000000;" parent="cv_layer" source="plate" target="ocr" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="arrow4" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#fb8c00;fontColor=#000000;" edge="1" parent="1" source="plate" target="track">
+                <mxCell id="arrow_track_vio" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#fb8c00;fontColor=#000000;" edge="1" parent="cv_layer" source="track" target="violation">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="arrow8" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#5e35b1;fontColor=#000000;" edge="1" parent="1" source="db" target="csv">
-                    <mxGeometry relative="1" as="geometry"/>
-                </mxCell>
-                <mxCell id="arrow9" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#5e35b1;fontColor=#000000;" edge="1" parent="1" source="csv" target="img">
-                    <mxGeometry relative="1" as="geometry"/>
-                </mxCell>
-                <mxCell id="arrow10" value="SQL Query" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;strokeWidth=2;strokeColor=#0288d1;fontColor=#000000;labelBackgroundColor=none;fontSize=11;fontStyle=1;" edge="1" parent="1" source="db" target="api2">
-                    <mxGeometry relative="1" as="geometry"/>
-                </mxCell>
-                <mxCell id="arrow11" value="File Access" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;strokeWidth=2;strokeColor=#0288d1;fontColor=#000000;labelBackgroundColor=none;fontSize=11;fontStyle=1;" edge="1" parent="1" source="img" target="api3">
-                    <mxGeometry relative="1" as="geometry"/>
-                </mxCell>
-                <mxCell id="arrow12" value="HTTP/WebSocket" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;strokeWidth=2;strokeColor=#689f38;fontColor=#000000;labelBackgroundColor=none;fontSize=11;fontStyle=1;" edge="1" parent="1" source="api1" target="dash">
-                    <mxGeometry relative="1" as="geometry"/>
-                </mxCell>
-                <mxCell id="arrow13" value="REST API" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;strokeWidth=2;strokeColor=#689f38;fontColor=#000000;labelBackgroundColor=none;fontSize=11;fontStyle=1;" edge="1" parent="1" source="api2" target="dash">
-                    <mxGeometry relative="1" as="geometry"/>
-                </mxCell>
-                <mxCell id="arrow_cfg1" value="Config" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;strokeWidth=1.5;strokeColor=#666666;fontColor=#000000;labelBackgroundColor=none;fontSize=10;" edge="1" parent="1" source="cfg" target="rtsp">
+                <mxCell id="arrow6" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#fb8c00;fontColor=#000000;" parent="cv_layer" source="ocr" target="logic" edge="1">
                     <mxGeometry relative="1" as="geometry">
                         <Array as="points">
-                            <mxPoint x="190" y="404"/>
-                            <mxPoint x="448" y="404"/>
+                            <mxPoint x="315" y="100"/>
                         </Array>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="arrow_cfg2" value="Config" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;strokeWidth=1.5;strokeColor=#666666;fontColor=#000000;labelBackgroundColor=none;fontSize=10;" edge="1" parent="1" source="cfg" target="veh">
+                <mxCell id="arrow_vio_logic" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#fb8c00;fontColor=#000000;" edge="1" parent="cv_layer" source="violation" target="logic">
                     <mxGeometry relative="1" as="geometry">
                         <Array as="points">
-                            <mxPoint x="190" y="254"/>
-                            <mxPoint x="890" y="254"/>
-                            <mxPoint x="890" y="547"/>
+                            <mxPoint x="450" y="310"/>
                         </Array>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="arrow7" value="Data Objects" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;strokeWidth=2;strokeColor=#5e35b1;fontColor=#000000;labelBackgroundColor=none;fontSize=11;fontStyle=1;" edge="1" parent="1" source="logic" target="db">
+                <mxCell id="storage_layer" value="DATA STORAGE" style="swimlane;startSize=30;fillColor=#ede7f6;strokeColor=#5e35b1;fontColor=#000000;fontSize=13;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="1049" y="82" width="280" height="410" as="geometry"/>
+                </mxCell>
+                <mxCell id="db" value="1️⃣2️⃣ SQLite Database&#10;violations + plates tables&#10;Lưu vi phạm &amp; biển số" style="rounded=1;fillColor=#ffffff;strokeColor=#333333;fontColor=#000000;fontSize=11;align=center;verticalAlign=middle;whiteSpace=wrap;" parent="storage_layer" vertex="1">
+                    <mxGeometry x="30" y="60" width="220" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="csv" value="1️⃣3️⃣ CSV Export&#10;Xuất dữ liệu CSV&#10;Báo cáo định kỳ" style="rounded=1;fillColor=#ffffff;strokeColor=#333333;fontColor=#000000;fontSize=11;align=center;verticalAlign=middle;whiteSpace=wrap;" parent="storage_layer" vertex="1">
+                    <mxGeometry x="30" y="171" width="220" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="img" value="1️⃣4️⃣ Evidence Images&#10;Ảnh bằng chứng&#10;Lưu khung hình vi phạm" style="rounded=1;fillColor=#ffffff;strokeColor=#333333;fontColor=#000000;fontSize=11;align=center;verticalAlign=middle;whiteSpace=wrap;" parent="storage_layer" vertex="1">
+                    <mxGeometry x="30" y="286" width="220" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="arrow8" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#5e35b1;fontColor=#000000;" parent="storage_layer" source="db" target="csv" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="arrow9" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#5e35b1;fontColor=#000000;" parent="storage_layer" source="csv" target="img" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="api_layer" value="API LAYER" style="swimlane;startSize=30;fillColor=#e1f5fe;strokeColor=#0288d1;fontColor=#000000;fontSize=13;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="1049" y="524" width="280" height="410" as="geometry"/>
+                </mxCell>
+                <mxCell id="api1" value="1️⃣5️⃣ Video Stream API&#10;Truyền video đã xử lý&#10;/video/stream endpoint" style="rounded=1;fillColor=#ffffff;strokeColor=#333333;fontColor=#000000;fontSize=11;align=center;verticalAlign=middle;whiteSpace=wrap;" parent="api_layer" vertex="1">
+                    <mxGeometry x="30" y="60" width="220" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="api2" value="1️⃣6️⃣ Data Query API&#10;Truy vấn dữ liệu&#10;/violations, /stats endpoints" style="rounded=1;fillColor=#ffffff;strokeColor=#333333;fontColor=#000000;fontSize=11;align=center;verticalAlign=middle;whiteSpace=wrap;" parent="api_layer" vertex="1">
+                    <mxGeometry x="30" y="180" width="220" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="api3" value="1️⃣7️⃣ Evidence API&#10;Truy xuất bằng chứng&#10;/evidence endpoint" style="rounded=1;fillColor=#ffffff;strokeColor=#333333;fontColor=#000000;fontSize=11;align=center;verticalAlign=middle;whiteSpace=wrap;" parent="api_layer" vertex="1">
+                    <mxGeometry x="30" y="286" width="220" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="ui_layer" value="FRONTEND" style="swimlane;startSize=30;fillColor=#f1f8e9;strokeColor=#689f38;fontColor=#000000;fontSize=13;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="1361" y="524" width="280" height="230" as="geometry"/>
+                </mxCell>
+                <mxCell id="dash" value="1️⃣8️⃣ Web Dashboard&#10;Giao diện người dùng&#10;Live | Search | Analytics" style="rounded=1;fillColor=#ffffff;strokeColor=#333333;fontColor=#000000;fontSize=11;align=center;verticalAlign=middle;whiteSpace=wrap;" parent="ui_layer" vertex="1">
+                    <mxGeometry x="30" y="60" width="220" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="arrow1" value="RTSP" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;strokeWidth=2;strokeColor=#1e88e5;fontColor=#000000;labelBackgroundColor=none;fontSize=11;fontStyle=1;" parent="1" source="cam" target="rtsp" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="750" y="172"/>
+                            <mxPoint x="750" y="172"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="arrow2" value="Frame Buffer" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;strokeWidth=2;strokeColor=#43a047;fontColor=#000000;labelBackgroundColor=none;fontSize=11;fontStyle=1;" parent="1" source="queue" target="veh" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="877" y="461"/>
+                            <mxPoint x="564" y="461"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="arrow7" value="Violation Data" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;strokeWidth=2;strokeColor=#5e35b1;fontColor=#000000;labelBackgroundColor=none;fontSize=11;fontStyle=1;" parent="1" source="logic" target="db" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="1037" y="724"/>
+                            <mxPoint x="1037" y="182"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="arrow_logic_stream" value="Processed Frames" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;strokeWidth=2;strokeColor=#0288d1;fontColor=#000000;labelBackgroundColor=none;fontSize=11;fontStyle=1;" edge="1" parent="1" source="logic" target="api1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="945" y="692"/>
+                            <mxPoint x="1060" y="692"/>
+                            <mxPoint x="1060" y="624"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="arrow10" value="SQL Query" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;strokeWidth=2;strokeColor=#0288d1;fontColor=#000000;labelBackgroundColor=none;fontSize=11;fontStyle=1;" parent="1" source="db" target="api2" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="1706" y="182"/>
+                            <mxPoint x="1706" y="774"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="arrow11" value="File Access" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;strokeWidth=2;strokeColor=#0288d1;fontColor=#000000;labelBackgroundColor=none;fontSize=11;fontStyle=1;" parent="1" source="img" target="api3" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="1339" y="408"/>
+                            <mxPoint x="1339" y="850"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="arrow12" value="WebSocket" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;strokeWidth=2;strokeColor=#689f38;fontColor=#000000;labelBackgroundColor=none;fontSize=11;fontStyle=1;" parent="1" source="api1" target="dash" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="1189" y="568"/>
+                            <mxPoint x="1431" y="568"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="arrow13" value="REST API" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;strokeWidth=2;strokeColor=#689f38;fontColor=#000000;labelBackgroundColor=none;fontSize=11;fontStyle=1;" parent="1" source="api2" target="dash" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="1497" y="744"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="arrow_cfg1" value="Config" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;strokeWidth=1.5;strokeColor=#666666;fontColor=#000000;labelBackgroundColor=none;fontSize=10;" parent="1" source="cfg" target="rtsp" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="715" y="392"/>
+                            <mxPoint x="715" y="201"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="arrow_cfg2" value="Config" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;strokeWidth=1.5;strokeColor=#666666;fontColor=#000000;labelBackgroundColor=none;fontSize=10;" parent="1" source="cfg" target="veh" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="512" y="499"/>
+                            <mxPoint x="512" y="499"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="arrow_zone_vio" value="Zones" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;strokeWidth=1.5;strokeColor=#666666;fontColor=#000000;labelBackgroundColor=none;fontSize=10;" edge="1" parent="1" source="zone_cfg" target="violation">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="405" y="272"/>
+                            <mxPoint x="405" y="907"/>
+                            <mxPoint x="740" y="907"/>
+                        </Array>
+                    </mxGeometry>
                 </mxCell>
             </root>
         </mxGraphModel>

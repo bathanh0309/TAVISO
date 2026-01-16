@@ -91,21 +91,24 @@ class VehicleTracker:
             
             # Find matching detection to get class info
             class_name = 'vehicle'
+            confidence = 0.5  # Default confidence
             for det in det_info:
                 dx1, dy1, dx2, dy2 = det['bbox']
                 det_cx = (dx1 + dx2) / 2
                 det_cy = (dy1 + dy2) / 2
                 if abs(det_cx - center_x) < 50 and abs(det_cy - center_y) < 50:
                     class_name = det.get('class_name', 'vehicle')
+                    confidence = det.get('confidence', 0.5)
                     self.tracks[track_id]['class_name'] = class_name
                     break
                     
             results.append({
                 'track_id': track_id,
                 'bbox': [int(x) for x in ltrb],
+                'confidence': confidence,
                 'class_name': self.tracks[track_id].get('class_name', class_name),
                 'history': self.tracks[track_id]['positions'][-20:],  # Last 20 positions
-                'plate': self.tracks[track_id].get('plate')
+                'plate_number': self.tracks[track_id].get('plate')
             })
             
         return results

@@ -25,10 +25,25 @@ class LicensePlateDetector:
         with open(config_path, 'r') as f:
             self.config = yaml.safe_load(f)
         
-        # Load YOLO model
+        # Load YOLO model for vehicle detection
         model_path = self.config['model']['yolo_path']
-        print(f"Loading YOLO model from {model_path}...")
+        print(f"Loading Vehicle Detection YOLO from {model_path}...")
         self.yolo = YOLO(model_path)
+        
+        # Load YOLO model for license plate detection (optional)
+        plate_config = self.config.get('license_plate', {})
+        plate_model_path = plate_config.get('model_path', 'models/license_plate_detector.pt')
+        
+        if os.path.exists(plate_model_path):
+            print(f"Loading License Plate YOLO from {plate_model_path}...")
+            self.plate_yolo = YOLO(plate_model_path)
+            self.plate_confidence = plate_config.get('confidence', 0.4)
+            self.use_plate_yolo = True
+            print("✓ License Plate YOLO model loaded!")
+        else:
+            self.plate_yolo = None
+            self.use_plate_yolo = False
+            print("⚠ No License Plate YOLO model found - using OCR only mode")
         
         # Initialize PaddleOCR
         print("Initializing PaddleOCR...")
@@ -85,6 +100,10 @@ class LicensePlateDetector:
                     'class_name': self.VEHICLE_CLASSES.get(class_id, 'vehicle')
                 })
         
+        # Debug logging
+        if len(detections) > 0:
+            print(f"[DETECTOR] Found {len(detections)} vehicles")
+        
         return detections
     
     def detect_plates(self, frame):
@@ -138,6 +157,9 @@ class LicensePlateDetector:
     def read_plate_from_vehicle(self, frame, vehicle_bbox):
         """
         Try to read license plate from a detected vehicle region
+        Uses 2-stage approach:
+        1. YOLOv11 License Plate Detection (if available) to locate plate
+        2. PaddleOCR to read characters
         
         Args:
             frame: Full frame
@@ -148,10 +170,10 @@ class LicensePlateDetector:
         """
         x1, y1, x2, y2 = vehicle_bbox
         
-        # Expand region slightly to capture plate
+        # Expand region to capture plate
         h, w = frame.shape[:2]
-        pad_x = int((x2 - x1) * 0.1)
-        pad_y = int((y2 - y1) * 0.2)
+        pad_x = int((x2 - x1) * 0.15)
+        pad_y = int((y2 - y1) * 0.25)
         
         x1 = max(0, x1 - pad_x)
         y1 = max(0, y1 - pad_y)
@@ -159,13 +181,56 @@ class LicensePlateDetector:
         y2 = min(h, y2 + pad_y)
         
         # Focus on lower portion of vehicle (where plate usually is)
-        plate_region_y1 = y1 + int((y2 - y1) * 0.5)  # Lower 50%
+        plate_region_y1 = y1 + int((y2 - y1) * 0.3)  # Bottom 70%
         vehicle_crop = frame[plate_region_y1:y2, x1:x2]
         
         if vehicle_crop.size == 0:
             return None
         
-        return self._read_plate_text(vehicle_crop)
+        # Method 1: Use YOLOv11 License Plate Detection (if available)
+        if self.use_plate_yolo and self.plate_yolo is not None:
+            try:
+                # Run YOLO license plate detection on vehicle crop
+                plate_results = self.plate_yolo(vehicle_crop, verbose=False)
+                
+                for r in plate_results:
+                    boxes = r.boxes
+                    if len(boxes) == 0:
+                        continue
+                    
+                    # Get the plate with highest confidence
+                    best_conf = 0
+                    best_plate_crop = None
+                    
+                    for box in boxes:
+                        conf = float(box.conf[0])
+                        if conf > best_conf and conf >= self.plate_confidence:
+                            px1, py1, px2, py2 = box.xyxy[0].cpu().numpy().astype(int)
+                            
+                            # Validate plate dimensions
+                            plate_w = px2 - px1
+                            plate_h = py2 - py1
+                            if plate_w > 20 and plate_h > 10:  # Minimum size
+                                best_conf = conf
+                                best_plate_crop = vehicle_crop[py1:py2, px1:px2]
+                    
+                    # If found a good plate, read it with OCR
+                    if best_plate_crop is not None:
+                        plate_text = self._read_plate_text(best_plate_crop)
+                        if plate_text:
+                            print(f"[YOLO+OCR] Detected plate: {plate_text} (conf: {best_conf:.2f})")
+                            return plate_text
+                
+            except Exception as e:
+                print(f"[YOLO LP ERROR] {e}, falling back to OCR-only")
+        
+        # Method 2: Fallback to OCR-only (original method)
+        plate_text = self._read_plate_text(vehicle_crop)
+        
+        if plate_text:
+            print(f"[OCR] Detected plate: {plate_text}")
+        
+        return plate_text
     
     def _read_plate_text(self, plate_image):
         """
@@ -181,18 +246,49 @@ class LicensePlateDetector:
             if plate_image is None or plate_image.size == 0:
                 return None
             
-            # Run PaddleOCR
-            results = self.ocr.ocr(plate_image, cls=True)
+            # Preprocessing to improve OCR accuracy
+            # 1. Convert to grayscale
+            if len(plate_image.shape) == 3:
+                gray = cv2.cvtColor(plate_image, cv2.COLOR_BGR2GRAY)
+            else:
+                gray = plate_image
             
-            if not results or not results[0]:
+            # 2. Increase contrast using CLAHE
+            clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8,8))
+            enhanced = clahe.apply(gray)
+            
+            # 3. Denoise
+            denoised = cv2.fastNlMeansDenoising(enhanced, None, 10, 7, 21)
+            
+            # 4. Resize if too small (OCR works better on larger images)
+            h, w = denoised.shape[:2]
+            if h < 50:
+                scale = 50 / h
+                new_w = int(w * scale)
+                denoised = cv2.resize(denoised, (new_w, 50), interpolation=cv2.INTER_CUBIC)
+            
+            # Run PaddleOCR on both original and preprocessed
+            results_original = self.ocr.ocr(plate_image, cls=True)
+            results_enhanced = self.ocr.ocr(denoised, cls=True)
+            
+            # Try both results
+            all_results = []
+            if results_original and results_original[0]:
+                all_results.extend(results_original[0])
+            if results_enhanced and results_enhanced[0]:
+                all_results.extend(results_enhanced[0])
+            
+            if not all_results:
                 return None
             
             # Combine all detected text
             texts = []
-            for line in results[0]:
+            for line in all_results:
                 if line and len(line) >= 2:
                     text = line[1][0]  # Get text content
-                    texts.append(text)
+                    confidence = line[1][1]  # Get confidence
+                    if confidence > 0.5:  # Only use high confidence results
+                        texts.append(text)
             
             if not texts:
                 return None
@@ -211,7 +307,7 @@ class LicensePlateDetector:
             return plate_text
             
         except Exception as e:
-            print(f"OCR error: {e}")
+            print(f"[OCR ERROR] {e}")
             return None
     
     def draw_detections(self, frame, detections, violation_info=None):
@@ -230,7 +326,7 @@ class LicensePlateDetector:
         
         for det in detections:
             x1, y1, x2, y2 = det['bbox']
-            conf = det['confidence']
+            conf = det.get('confidence', 0.5)  # Safe access with default
             class_name = det.get('class_name', 'vehicle')
             track_id = det.get('track_id')
             plate = det.get('plate_number', '')

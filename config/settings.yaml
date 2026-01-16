@@ -14,9 +14,15 @@ csv:
   path: "data/csv/violations.csv"
 
 model:
-  yolo_path: "models/yolo11n.pt"  # Auto-download if not exists
-  confidence: 0.5
+  yolo_path: "models/yolo11n.pt"  # ✓ Updated by setup script  # Auto-download if not exists
+  confidence: 0.3  # Lowered for better detection
   vehicle_classes: [2, 3, 5, 7]  # car, motorcycle, bus, truck (COCO classes)
+
+# License Plate Detection (YOLOv11 from Hugging Face)
+license_plate:
+  model_path: "models/license_plate_detector.pt"
+  confidence: 0.4
+  use_yolo: true  # Set to false to use OCR-only mode
 
 ocr:
   lang: "en"  # PaddleOCR language
